@@ -1,0 +1,36 @@
+2025-11-24 01:24:33,460 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:33,462 - ERROR - Failed to process politics
+2025-11-24 01:24:35,034 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:35,036 - ERROR - Failed to process sports
+2025-11-24 01:24:36,367 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:36,370 - ERROR - Failed to process entertainment
+2025-11-24 01:24:37,582 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:37,583 - ERROR - Failed to process business
+2025-11-24 01:24:39,883 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:39,883 - ERROR - Failed to process technology
+2025-11-24 01:24:41,243 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:41,243 - ERROR - Failed to process health
+2025-11-24 01:24:42,861 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:42,861 - ERROR - Failed to process education
+2025-11-24 01:24:44,167 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:44,170 - ERROR - Failed to process agriculture
+2025-11-24 01:24:45,481 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:45,482 - ERROR - Failed to process culture
+2025-11-24 01:24:46,758 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:46,760 - ERROR - Failed to process crime
+2025-11-24 01:24:49,151 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:49,152 - ERROR - Failed to process environment
+2025-11-24 01:24:50,625 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:50,627 - ERROR - Failed to process international
+2025-11-24 01:24:52,359 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:52,360 - ERROR - Failed to process economy
+2025-11-24 01:24:53,415 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:53,416 - ERROR - Failed to process society
+2025-11-24 01:24:54,460 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:54,461 - ERROR - Failed to process human_interest
+2025-11-24 01:24:55,657 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:55,659 - ERROR - Failed to process lifestyle
+2025-11-24 01:24:56,926 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:56,928 - ERROR - Failed to process religion
+2025-11-24 01:24:58,587 - ERROR - Perplexity API call failed: 400 Client Error: Bad Request for url: https://api.perplexity.ai/chat/completions
+2025-11-24 01:24:58,587 - ERROR - Failed to process transportation
