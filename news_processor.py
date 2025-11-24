@@ -1,106 +1,105 @@
-import logging
 from datetime import datetime
 import config
 from content_generator import process_article_single_call
-from media_handler import generate_audio, extract_thumbnail
+from media_handler import extract_thumbnails, generate_audio, extract_thumbnail
+from logger import log_info, log_success, log_error, log_warning, create_progress_bar, console
+from deduplication import is_duplicate, save_article
 
-
-def log_error(message):
-    """Log errors to file"""
-    logging.error(message)
-    print(f"❌ PROCESSOR ERROR: {message}")
 
 
 def process_article(category):
-    """
-    OPTIMIZED: Main article processing pipeline
-    Now uses single API call instead of 4!
-    """
+    """Main article processing pipeline"""
+    
     try:
-        print(f"\n{'='*60}")
-        print(f"Processing {category.upper()} article...")
-        print(f"{'='*60}\n")
+        console.rule(f"[bold blue]{category.upper()}[/bold blue]")
         
-        # Get random word count
         word_count = config.get_random_word_count()
-        print(f"📏 Target length: {word_count} words\n")
+        log_info(f"Target: {word_count} words", module="news_processor")
         
-        # SINGLE API CALL - gets everything at once!
+        # Single API call
         article_data = process_article_single_call(category, word_count)
         
         if not article_data:
-            log_error(f"Failed to process {category}")
+            log_error(f"Failed to get article data for {category}", module="news_processor")
             return False
         
-        # Extract data from response
+        headline = article_data.get('headline', 'No headline')
+        source = article_data.get('source_url', '')
+
+        if is_duplicate(headline, category, allowed_similarity=60, max_hours=48):
+            log_info(f"SKIPPED as duplicate: {headline[:60]}", module='news_processor')
+            return False  # Don't process further
+
+        # If we reach here, save to dedup table!
+        save_article(headline, category, source)
+        
         french_summary = article_data.get('french_summary')
         english_summary = article_data.get('english_summary')
         mood = article_data.get('mood', 'neutral')
         headline = article_data.get('headline', 'No headline')
         
         if not french_summary or not english_summary:
-            log_error(f"Missing summaries for {category}")
+            log_error(f"Missing summaries for {category}", module="news_processor")
             return False
         
-        print(f"😊 Mood: {mood}\n")
-        
-        # Generate audio files
+        # Generate audio
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         audio_filename = f"{category}_{timestamp}.mp3"
         
         french_audio = generate_audio(french_summary, "french", audio_filename)
-        if not french_audio:
-            log_error(f"Failed to generate French audio for {category}")
-            return False
-        
         english_audio = generate_audio(english_summary, "english", audio_filename)
-        if not english_audio:
-            log_error(f"Failed to generate English audio for {category}")
+        
+        if not french_audio or not english_audio:
+            log_error(f"Audio generation failed for {category}", module="news_processor")
             return False
         
-        # Extract thumbnail
-        thumbnail = extract_thumbnail(article_data.get('source_url', ''), f"{category}_{timestamp}.jpg")
+        # Thumbnail
+        filename_base = f"{category}_{timestamp}"
+
+        source_url = article_data.get('source_urls', [None])[0]  # Primary source or first available
+
+        thumbnails = []
+        if source_url:
+            thumbnails = extract_thumbnails(source_url, category, filename_base)
+        if not thumbnails:
+            # Optional: log or handle no thumbnail available
+            log_warning(f"No thumbnails found for {category} article", module="news_processor")
         
-        # Display results
-        print(f"\n{'='*60}")
-        print(f"✅ ARTICLE PROCESSED SUCCESSFULLY")
-        print(f"{'='*60}")
-        print(f"Headline: {headline}")
-        print(f"Category: {category}")
-        print(f"Mood: {mood}")
-        print(f"Word Count: {word_count}")
-        print(f"\n📝 FRENCH SUMMARY:\n{french_summary[:200]}...")
-        print(f"\n📝 ENGLISH SUMMARY:\n{english_summary[:200]}...")
-        print(f"\n🔊 French Audio: {french_audio}")
-        print(f"🔊 English Audio: {english_audio}")
-        print(f"📷 Thumbnail: {thumbnail}")
-        print(f"{'='*60}\n")
+        # Success summary
+        log_success(f"✨ {category.upper()} completed | {headline[:40]}...", module="news_processor")
+        console.print(f"   📝 FR: {french_summary[:80]}...")
+        console.print(f"   📝 EN: {english_summary[:80]}...")
+        console.print(f"   🎭 Mood: {mood} | 🔊 Audio: ✓ | 📷 Thumb: {'✓' if thumbnails else '✗'}\n")
         
         return True
         
     except Exception as e:
-        log_error(f"Article processing failed for {category}: {str(e)}")
+        log_error(f"Processing failed for {category}: {str(e)}", module="news_processor")
         return False
 
-
 def fetch_news_batch():
-    """Fetch news for all categories"""
-    print(f"\n🚀 Starting news batch at {datetime.now()}")
-    print(f"{'='*60}\n")
+    """Fetch news for all categories with progress bar"""
+    log_info(f"Starting batch at {datetime.now()}", module="news_processor")
+    console.rule("[bold green]🚀 NEWS BATCH STARTED[/bold green]")
     
     success_count = 0
     fail_count = 0
     
-    for category in config.CATEGORIES:
-        if process_article(category):
-            success_count += 1
-        else:
-            fail_count += 1
+    # Progress bar
+    progress = create_progress_bar(len(config.CATEGORIES), "Processing articles")
     
-    print(f"\n{'='*60}")
-    print(f"📊 BATCH SUMMARY")
-    print(f"{'='*60}")
-    print(f"✅ Successful: {success_count}")
-    print(f"❌ Failed: {fail_count}")
-    print(f"⚡ API Calls Saved: {success_count * 3} (75% reduction!)")
-    print(f"✅ Batch completed at {datetime.now()}\n")
+    with progress:
+        task = progress.add_task("[cyan]Processing...", total=len(config.CATEGORIES))
+        
+        for category in config.CATEGORIES:
+            if process_article(category):
+                success_count += 1
+            else:
+                fail_count += 1
+            progress.update(task, advance=1)
+    
+    console.rule("[bold green]📊 BATCH COMPLETE[/bold green]")
+    console.print(f"✅ Successful: [green]{success_count}[/green]")
+    console.print(f"❌ Failed: [red]{fail_count}[/red]")
+    console.print(f"⚡ API calls saved: [yellow]{success_count * 3}[/yellow] (75% reduction)")
+    log_success(f"Batch complete: {success_count} success, {fail_count} failed", module="news_processor")

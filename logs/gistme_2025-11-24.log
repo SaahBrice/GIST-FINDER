@@ -1,0 +1,368 @@
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [main] Pipeline starting up...
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [scheduler] Fetching news every 30 minutes
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [scheduler] Jobs persisted to: jobs.sqlite
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [scheduler] Total categories: 20
+2025-11-24 01:43:07 | SUCCESS  | logger.py:log_success:61 | [scheduler] Scheduler initialized successfully
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Starting batch at 2025-11-24 01:43:07.752527
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing politics article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for politics
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for politics
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing sports article (600 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for sports
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for sports
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing entertainment article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for entertainment
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for entertainment
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 1000 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing business article (1000 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for business
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for business
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing technology article (600 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for technology
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for technology
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing health article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for health
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for health
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing education article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for education
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for education
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing agriculture article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for agriculture
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for agriculture
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing culture article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for culture
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for culture
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing crime article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for crime
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for crime
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 1000 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing environment article (1000 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for environment
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for environment
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing international article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for international
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for international
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing economy article (600 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for economy
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for economy
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 1000 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing society article (1000 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for society
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for society
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing human_interest article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for human_interest
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for human_interest
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing lifestyle article (600 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for lifestyle
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for lifestyle
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing religion article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for religion
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for religion
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing transportation article (400 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for transportation
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for transportation
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing real_estate article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for real_estate
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for real_estate
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:43:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing science article (200 words)
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [api_client] Perplexity API call failed: Only one live display may be active at once
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [content_generator] No response for science
+2025-11-24 01:43:07 | ERROR    | logger.py:log_error:71 | [news_processor] Failed to get article data for science
+2025-11-24 01:43:07 | SUCCESS  | logger.py:log_success:61 | [news_processor] Batch complete: 0 success, 20 failed
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [main] Pipeline starting up...
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [scheduler] Fetching news every 30 minutes
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [scheduler] Jobs persisted to: jobs.sqlite
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [scheduler] Total categories: 20
+2025-11-24 01:46:50 | SUCCESS  | logger.py:log_success:61 | [scheduler] Scheduler initialized successfully
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [news_processor] Starting batch at 2025-11-24 01:46:50.089175
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [content_generator] Processing politics article (600 words)
+2025-11-24 01:46:50 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 01:47:05 | INFO     | logger.py:log_info:56 | [api_client] API call successful (3205 chars)
+2025-11-24 01:47:05 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for politics | Mood: angry
+2025-11-24 01:47:05 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 01:48:16 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: politics_20251124_014705.mp3 (french)
+2025-11-24 01:48:16 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
+2025-11-24 01:49:16 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: politics_20251124_014705.mp3 (english)
+2025-11-24 01:49:16 | INFO     | logger.py:log_info:56 | [media_handler] Thumbnail placeholder: politics_20251124_014705.jpg
+2025-11-24 01:49:16 | SUCCESS  | logger.py:log_success:61 | [news_processor] ✨ POLITICS completed | Paul Biya réélu dans la tourmente : viol...
+2025-11-24 01:49:16 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 01:49:16 | INFO     | logger.py:log_info:56 | [content_generator] Processing sports article (200 words)
+2025-11-24 01:49:16 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 01:49:26 | INFO     | logger.py:log_info:56 | [api_client] API call successful (1637 chars)
+2025-11-24 01:49:26 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for sports | Mood: concerning
+2025-11-24 01:49:26 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 01:49:56 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: sports_20251124_014926.mp3 (french)
+2025-11-24 01:49:56 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
+2025-11-24 01:50:24 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: sports_20251124_014926.mp3 (english)
+2025-11-24 01:50:24 | INFO     | logger.py:log_info:56 | [media_handler] Thumbnail placeholder: sports_20251124_014926.jpg
+2025-11-24 01:50:24 | SUCCESS  | logger.py:log_success:61 | [news_processor] ✨ SPORTS completed | Cameroun: Crise, CAN, et Eto'o en feu!...
+2025-11-24 01:50:24 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 01:50:24 | INFO     | logger.py:log_info:56 | [content_generator] Processing entertainment article (400 words)
+2025-11-24 01:50:24 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 01:50:38 | INFO     | logger.py:log_info:56 | [api_client] API call successful (2320 chars)
+2025-11-24 01:50:38 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for entertainment | Mood: exciting
+2025-11-24 01:50:38 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [main] Pipeline starting up...
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [scheduler] Fetching news every 30 minutes
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [scheduler] Jobs persisted to: jobs.sqlite
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [scheduler] Total categories: 20
+2025-11-24 02:15:51 | SUCCESS  | logger.py:log_success:61 | [scheduler] Scheduler initialized successfully
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Starting batch at 2025-11-24 02:15:51.886532
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 800 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for politics: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for sports: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for entertainment: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 800 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for business: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for technology: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for health: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 800 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for education: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for agriculture: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for culture: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 1000 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for crime: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 1000 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for environment: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for international: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for economy: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for society: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for human_interest: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 800 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for lifestyle: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for religion: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for transportation: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 02:15:51 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for real_estate: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:51 | INFO     | logger.py:log_info:56 | [news_processor] Target: 400 words
+2025-11-24 02:15:52 | ERROR    | logger.py:log_error:71 | [news_processor] Processing failed for science: Invalid format specifier ' "Brief headline",
+  "source_urls": ["all sources urls e.g https://camer.be/article1"],
+  "source_names": ["all sources names e.g camer.be"],
+  "french_summary": "Full French summary here",
+  "english_summary": "Full English summary here",
+  "mood": "mood word"
+' for object of type 'str'
+2025-11-24 02:15:52 | SUCCESS  | logger.py:log_success:61 | [news_processor] Batch complete: 0 success, 20 failed
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [main] Pipeline starting up...
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [scheduler] Fetching news every 30 minutes
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [scheduler] Jobs persisted to: jobs.sqlite
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [scheduler] Total categories: 20
+2025-11-24 02:18:55 | SUCCESS  | logger.py:log_success:61 | [scheduler] Scheduler initialized successfully
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [news_processor] Starting batch at 2025-11-24 02:18:55.946666
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [news_processor] Target: 800 words
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [content_generator] Processing politics article (800 words)
+2025-11-24 02:18:55 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 02:19:08 | INFO     | logger.py:log_info:56 | [api_client] API call successful (2939 chars)
+2025-11-24 02:19:08 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for politics | Mood: angry
+2025-11-24 02:19:08 | SUCCESS  | logger.py:log_success:61 | [deduplication] Stored headline: Cameroun en ébullition : Biya réélu dans la douleu...
+2025-11-24 02:19:08 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 02:20:17 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: politics_20251124_021908.mp3 (french)
+2025-11-24 02:20:17 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [main] Pipeline starting up...
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [scheduler] Fetching news every 30 minutes
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [scheduler] Jobs persisted to: jobs.sqlite
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [scheduler] Total categories: 21
+2025-11-24 02:59:02 | SUCCESS  | logger.py:log_success:61 | [scheduler] Scheduler initialized successfully
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [news_processor] Starting batch at 2025-11-24 02:59:02.254281
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 02:59:02 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 02:59:16 | INFO     | logger.py:log_info:56 | [api_client] API call successful (2026 chars)
+2025-11-24 02:59:16 | INFO     | logger.py:log_info:56 | [content_generator] Processing politics article (200 words)
+2025-11-24 02:59:16 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 02:59:27 | INFO     | logger.py:log_info:56 | [api_client] API call successful (1934 chars)
+2025-11-24 02:59:27 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for politics | Mood: concerning
+2025-11-24 02:59:27 | SUCCESS  | logger.py:log_success:61 | [deduplication] Stored headline: Tchiroma Bakary en exil, tensions post-électorales...
+2025-11-24 02:59:27 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 03:00:10 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: politics_20251124_025927.mp3 (french)
+2025-11-24 03:00:10 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
+2025-11-24 03:00:56 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: politics_20251124_025927.mp3 (english)
+2025-11-24 03:00:56 | WARNING  | logger.py:log_warning:66 | [news_processor] No thumbnails found for politics article
+2025-11-24 03:00:56 | SUCCESS  | logger.py:log_success:61 | [news_processor] ✨ POLITICS completed | Tchiroma Bakary en exil, tensions post-é...
+2025-11-24 03:00:56 | INFO     | logger.py:log_info:56 | [news_processor] Target: 200 words
+2025-11-24 03:00:56 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 03:01:07 | INFO     | logger.py:log_info:56 | [api_client] API call successful (1662 chars)
+2025-11-24 03:01:07 | INFO     | logger.py:log_info:56 | [content_generator] Processing sports article (200 words)
+2025-11-24 03:01:07 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 03:01:18 | INFO     | logger.py:log_info:56 | [api_client] API call successful (1505 chars)
+2025-11-24 03:01:18 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for sports | Mood: concerning
+2025-11-24 03:01:18 | SUCCESS  | logger.py:log_success:61 | [deduplication] Stored headline: Cameroun: Tempête avant la CAN 2025...
+2025-11-24 03:01:18 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 03:01:37 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: sports_20251124_030118.mp3 (french)
+2025-11-24 03:01:37 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
+2025-11-24 03:02:04 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: sports_20251124_030118.mp3 (english)
+2025-11-24 03:02:04 | WARNING  | logger.py:log_warning:66 | [news_processor] No thumbnails found for sports article
+2025-11-24 03:02:04 | SUCCESS  | logger.py:log_success:61 | [news_processor] ✨ SPORTS completed | Cameroun: Tempête avant la CAN 2025...
+2025-11-24 03:02:04 | INFO     | logger.py:log_info:56 | [news_processor] Target: 600 words
+2025-11-24 03:02:04 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 03:02:19 | INFO     | logger.py:log_info:56 | [api_client] API call successful (2447 chars)
+2025-11-24 03:02:19 | INFO     | logger.py:log_info:56 | [content_generator] Processing entertainment article (600 words)
+2025-11-24 03:02:19 | INFO     | logger.py:log_info:56 | [api_client] Calling Perplexity API (sonar)...
+2025-11-24 03:02:37 | INFO     | logger.py:log_info:56 | [api_client] API call successful (2985 chars)
+2025-11-24 03:02:38 | SUCCESS  | logger.py:log_success:61 | [content_generator] Article generated for entertainment | Mood: concerning
+2025-11-24 03:02:38 | SUCCESS  | logger.py:log_success:61 | [deduplication] Stored headline: Cameroun en feu: tensions post-électorales, artist...
+2025-11-24 03:02:38 | INFO     | logger.py:log_info:56 | [media_handler] Generating french audio...
+2025-11-24 03:03:46 | SUCCESS  | logger.py:log_success:61 | [media_handler] Audio generated: entertainment_20251124_030238.mp3 (french)
+2025-11-24 03:03:46 | INFO     | logger.py:log_info:56 | [media_handler] Generating english audio...
