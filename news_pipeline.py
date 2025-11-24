@@ -7,15 +7,16 @@ Main entry point for the news automation system
 from scheduler import start_scheduler
 from logger import console, log_info
 import sys
+from retry_scheduler import run_retry_scheduler  # Import the retry scheduler
 
 def print_banner():
     """Print startup banner"""
     banner = """
 ╔══════════════════════════════════════════════════════════╗
 ║                                                          ║
-║          GISTME NEWS AUTOMATION PIPELINE                 ║
+║           GISTME NEWS AUTOMATION PIPELINE                ║
 ║                                                          ║
-║  🇨🇲  Cameroonian News | Dual Language | Audio-First   ║
+║  🇨🇲  Cameroonian News | Dual Language | Audio-First      ║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
     """
@@ -26,8 +27,11 @@ def main():
     try:
         print_banner()
         log_info("Pipeline starting up...", module="main")
-        
-        # Start the scheduler (blocks and runs continuously)
+
+        # Start retry scheduler for failed uploads in background
+        run_retry_scheduler(interval_seconds=3600)  # Every hour
+
+        # Start the main news scheduler (blocks and runs continuously)
         start_scheduler()
         
     except Exception as e:
