@@ -4,6 +4,13 @@ import random
 
 load_dotenv()
 
+
+# django communication channel 
+
+API_BASE_URL = "https://yourdjangoapp.com/api"
+API_SECRET_CODE = "your-secure-pre-shared-code"
+
+
 # API Configuration
 PERPLEXITY_API_KEY = os.getenv('PERPLEXITY_API_KEY')
 PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions'
