@@ -6,6 +6,11 @@ from logger import log_info, log_success, log_warning
 
 DB_FILE = 'deduplication.sqlite'
 
+#how long can we say an article is "recent" (in hours) and different from what we have seen before
+max_hours = 72
+#what is the allowed similarity percentage to consider two headlines as duplicates
+allowed_similarity = 60
+
 def get_db():
     conn = sqlite3.connect(DB_FILE)
     conn.execute("""CREATE TABLE IF NOT EXISTS seen_articles (
@@ -21,7 +26,7 @@ def get_db():
 def hash_text(text):
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
-def is_duplicate(new_headline, category, allowed_similarity=60, max_hours=48):
+def is_duplicate(new_headline, category, allowed_similarity, max_hours):
     conn = get_db()
     cutoff_time = datetime.utcnow() - timedelta(hours=max_hours)
     # Fetch only recent articles in the same category

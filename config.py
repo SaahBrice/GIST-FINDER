@@ -32,10 +32,10 @@ CATEGORIES = [
     'religion',
     'transportation',
     'real_estate',
-    'science'
+    'science',
     'concours_launch',         # HOT GIST New specialized category
-    'exam_results'             # HOT GIST New specialized category
-    'latest_jobs'             #  HOT GIST New specialized category
+    'exam_results',             # HOT GIST New specialized category
+    'latest_jobs',             #  HOT GIST New specialized category
 ]
 
 # File Paths

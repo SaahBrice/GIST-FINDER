@@ -1,13 +1,28 @@
 from api_client import call_perplexity_api
 from logger import log_info, log_success, log_error, log_warning
 import json
+from datetime import datetime, timedelta
+from deduplication import get_db, max_hours
+
+def get_recent_headlines(category, hours=max_hours):
+    conn = get_db()
+    cutoff_time = datetime.utcnow() - timedelta(hours=hours)
+    cur = conn.execute("""SELECT headline FROM seen_articles WHERE category=? AND created_at > ?""",
+                       (category, cutoff_time.isoformat()))
+    headlines = [row[0] for row in cur]
+    conn.close()
+    return headlines
+
+
+
+
 
 def process_article_single_call(category, word_count):
     """
     OPTIMIZED: Single API call that does everything
     """
-    
-    prompt = build_prompt(category, word_count)
+    exclude_headlines = get_recent_headlines(category, hours=max_hours)
+    prompt = build_prompt(category, word_count, exclude_headlines=exclude_headlines)
     response = call_perplexity_api(prompt)
     
     log_info(f"Processing {category} article ({word_count} words)", module="content_generator")
@@ -40,17 +55,27 @@ def process_article_single_call(category, word_count):
         return None
 
 
-def build_prompt(category, word_count):
+def build_prompt(category, word_count, exclude_headlines=None):
+    # Prepare exclusion text from recent headlines
+    exclude_clause = ''
+    if exclude_headlines:
+        # Escape quotes and limit to ~10 headlines to avoid too long prompts
+        clean_headlines = [h.replace('"', '\\"') for h in exclude_headlines[:10]]
+        exclude_clause = "Avoid generating or searching for news similar to these recent headlines:\n"
+        exclude_clause += "\n".join(f'- "{headline}"' for headline in clean_headlines)
+    
     if category in ['concours_launch', 'exam_results']:
         return f"""
         You are the best news curator journalist specialized in Cameroon’s education and competition sector.
-        1. Search Cameroonian news sources for official announcements from national right up to divisional levels or results of national, regional or other exams even international exams and concours where cameroonians participated published in the last 10 days.
+        1. Search Cameroonian news sources for official announcements from national right up to divisional levels or results of national, regional or other exams even international exams and concours where Cameroonians participated published in the last 10 days.
         2. Write a {word_count}-word summary in FRENCH using professional, punchy Cameroonian journalism style
         3. Write a {word_count}-word summary in ENGLISH using professional, punchy Cameroonian journalism style
         4. Identify the emotional mood (choose one: happy, angry, sad, exciting, shocking, inspiring, concerning, neutral)
         Return ALL sources linked to this story (with URLs and source names).
         Provide mood classification (happy, angry, sad, exciting, shocking, inspiring, concerning, neutral).
-        
+
+        {exclude_clause}
+
         Return your response in this EXACT JSON format:
         {{
           "headline": "Brief headline",
@@ -66,7 +91,7 @@ def build_prompt(category, word_count):
           "english_summary": "English summary...",
           "mood": "mood word"
         }}
-        
+
         Return ONLY valid JSON, nothing else.
         """
     elif category == 'latest_jobs':
@@ -78,7 +103,9 @@ def build_prompt(category, word_count):
         4. Identify the emotional mood (choose one: happy, angry, sad, exciting, shocking, inspiring, concerning, neutral).
         Return ALL sources linked to this story (with URLs and source names).
         Provide mood classification (happy, angry, sad, exciting, shocking, inspiring, concerning, neutral).
-        
+
+        {exclude_clause}
+
         Return your response in this EXACT JSON format:
         {{
           "headline": "Brief headline",
@@ -94,12 +121,10 @@ def build_prompt(category, word_count):
           "english_summary": "English summary...",
           "mood": "mood word"
         }}
-        
+
         Return ONLY valid JSON, nothing else.
         """
-    
     else:
-        # Your original generalized prompt
         return f"""
         You are the best Cameroonian news journalist curator. Complete this task in ONE response:
 
@@ -114,6 +139,8 @@ def build_prompt(category, word_count):
         - Rhetorical questions
         - Write like texting a friend breaking news
 
+        {exclude_clause}
+
         Return your response in this EXACT JSON format:
         {{
             "headline": "Brief headline",
@@ -125,3 +152,5 @@ def build_prompt(category, word_count):
 
         Return ONLY valid JSON, nothing else.
         """
+
+
