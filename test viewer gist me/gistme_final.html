@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GistMe - Daily Gist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Black+Ops+One&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE STYLES --- */
+        body { font-family: 'Inter', sans-serif; background-color: #000; }
+        h1, h2, h3, .brand-font { font-family: 'Carter One', cursive; }
+        .stamp-font { font-family: 'Black Ops One', cursive; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- GLASSMORPHISM --- */
+        .glass-morphism {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-morphism-yellow {
+            background: rgba(234, 179, 8, 0.15);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 2px solid rgba(234, 179, 8, 0.3);
+        }
+
+        /* --- TEXTURE --- */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; opacity: 0.07;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- PATTERNS (Afro-Futurist) --- */
+        .pattern-kente { background: repeating-linear-gradient(45deg, #b45309, #b45309 10px, #f59e0b 10px, #f59e0b 20px); }
+        .pattern-mud { background-image: radial-gradient(#444 15%, transparent 16%), radial-gradient(#444 15%, transparent 16%); background-color: #1c1917; background-position: 0 0, 10px 10px; background-size: 20px 20px; }
+        .pattern-geo { background: linear-gradient(135deg, #1e3a8a 25%, transparent 25%) -10px 0, linear-gradient(225deg, #1e3a8a 25%, transparent 25%) -10px 0, linear-gradient(315deg, #1e3a8a 25%, transparent 25%), linear-gradient(45deg, #1e3a8a 25%, transparent 25%); background-size: 20px 20px; background-color: #172554; }
+        .pattern-fire { background: repeating-linear-gradient(45deg, #dc2626, #dc2626 10px, #ef4444 10px, #ef4444 20px); }
+
+        /* --- ANIMATIONS --- */
+        .slide-up { animation: slideUp 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Neon Griot Pulse */
+        @keyframes pulse-griot {
+            0%, 100% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.8), 0 0 40px rgba(234, 179, 8, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 1), 0 0 60px rgba(234, 179, 8, 0.7); transform: scale(1.05); }
+        }
+        .griot-pulse { animation: pulse-griot 2s infinite; }
+
+        /* Talking Drum Ripple Effect */
+        @keyframes drum-ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .drum-ripple {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.6) 0%, transparent 70%);
+            animation: drum-ripple 0.6s ease-out;
+        }
+
+        /* Heartbeat Animation for Drum */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10% { transform: scale(1.3); }
+            20% { transform: scale(1); }
+            30% { transform: scale(1.3); }
+            40% { transform: scale(1); }
+        }
+        .heartbeat { animation: heartbeat 0.6s ease-in-out; }
+
+        /* Comment Bubble Float Animation */
+        @keyframes float-up {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            50% { transform: translateY(-200px) translateX(10px); opacity: 0.8; }
+            100% { transform: translateY(-400px) translateX(-10px); opacity: 0; }
+        }
+        .comment-bubble {
+            animation: float-up 5s ease-out forwards;
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+        }
+
+        /* Ken Burns Zoom Effect */
+        @keyframes kenburns {
+            0% { transform: scale(1) translateX(0); }
+            100% { transform: scale(1.1) translateX(-5%); }
+        }
+        .kenburns { animation: kenburns 20s ease-in-out infinite alternate; }
+
+        /* Parallax 3D Effect */
+        .parallax-container { perspective: 1000px; }
+        .parallax-bg { transform: translateZ(-50px) scale(1.05); }
+        .parallax-content { transform: translateZ(0); }
+
+        /* Modal Slide Up */
+        @keyframes modalSlideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-slide-up { animation: modalSlideUp 0.3s ease-out; }
+
+        /* Stamp Slam Animation */
+        @keyframes stamp-slam {
+            0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+            40% { transform: scale(0.8) rotate(-5deg); opacity: 1; }
+            60% { transform: scale(1.1) rotate(2deg); }
+            80% { transform: scale(0.95) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        .stamp-effect { animation: stamp-slam 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+
+        /* Audio Player Waveform */
+        @keyframes wave {
+            0%, 100% { height: 20%; }
+            50% { height: 100%; }
+        }
+        .audio-wave-bar {
+            width: 3px;
+            background: linear-gradient(to top, #eab308, #fbbf24);
+            margin: 0 2px;
+            border-radius: 2px;
+            animation: wave 1s ease-in-out infinite;
+        }
+        .audio-wave-bar:nth-child(1) { animation-delay: 0s; }
+        .audio-wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .audio-wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .audio-wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .audio-wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        .audio-wave-bar:nth-child(6) { animation-delay: 0.2s; }
+        .audio-wave-bar:nth-child(7) { animation-delay: 0.1s; }
+    </style>
+</head>
+
+<body class="overflow-hidden fixed inset-0 text-white">
+    <div class="noise-overlay"></div>
+
+    <div x-data="gistMeApp()" x-init="initApp()" class="h-full w-full relative">
+
+        <!-- MOOD SELECTOR (Vibe Check Landing) -->
+        <div x-show="!moodSelected" 
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:leave="transition ease-in duration-300"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+
+            <div class="text-center px-8">
+                <h1 class="text-5xl md:text-7xl brand-font text-yellow-500 mb-4 slide-up">GistMe</h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-12 slide-up" style="animation-delay: 0.1s">Choose your vibe to start gisting</p>
+
+                <div class="grid grid-cols-2 gap-6 max-w-md mx-auto">
+                    <button @click="selectMood('curious')" 
+                            class="vibe-btn slide-up bg-gradient-to-br from-purple-600 to-purple-800 p-8 rounded-3xl hover:scale-105 transition-transform duration-300 shadow-2xl"
+                            style="animation-delay: 0.2s">
+                        <div class="text-6xl mb-3">🤔</div>
+                        <div class="text-xl font-bold">Curious</div>
+                    </button>
+
+                    <button @click="selectMood('serious')" 
+                            class="vibe-btn slide-up bg-gradient-to-br from-blue-700 to-blue-900 p-8 rounded-3xl hover:scale-105 transition-transform duration-300 shadow-2xl"
+                            style="animation-delay: 0.3s">
+                        <div class="text-6xl mb-3">🧐</div>
+                        <div class="text-xl font-bold">Serious</div>
+                    </button>
+
+                    <button @click="selectMood('chill')" 
+                            class="vibe-btn slide-up bg-gradient-to-br from-green-600 to-green-800 p-8 rounded-3xl hover:scale-105 transition-transform duration-300 shadow-2xl"
+                            style="animation-delay: 0.4s">
+                        <div class="text-6xl mb-3">😌</div>
+                        <div class="text-xl font-bold">Chill</div>
+                    </button>
+
+                    <button @click="selectMood('hyped')" 
+                            class="vibe-btn slide-up bg-gradient-to-br from-red-600 to-orange-600 p-8 rounded-3xl hover:scale-105 transition-transform duration-300 shadow-2xl"
+                            style="animation-delay: 0.5s">
+                        <div class="text-6xl mb-3">🤩</div>
+                        <div class="text-xl font-bold">Hyped</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN FEED INTERFACE -->
+        <div x-show="moodSelected" class="h-full w-full">
+
+            <!-- Progress Bar Header -->
+            <div class="fixed top-0 left-0 w-full z-40 bg-black/90 backdrop-blur-md border-b border-gray-800">
+                <div class="flex justify-between items-center px-4 py-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Vibe:</span>
+                        <span class="text-xs font-bold text-yellow-500 capitalize" x-text="currentMood"></span>
+                    </div>
+                    <span class="text-xs font-bold text-yellow-500" x-text="progressPercentage + '%'"></span>
+                </div>
+                <div class="w-full h-1 bg-gray-800">
+                    <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+                         :style="`width: ${progressPercentage}%`"></div>
+                </div>
+            </div>
+
+            <!-- Scrollable Feed Container with Parallax -->
+            <div @scroll="handleScroll" 
+                 class="h-full overflow-y-scroll no-scrollbar snap-y snap-mandatory parallax-container pt-14 pb-16"
+                 x-ref="feedContainer">
+
+                <template x-for="(article, index) in articles" :key="index">
+                    <div class="relative w-full h-full flex-shrink-0 snap-start snap-always">
+
+                        <!-- Background Image with Ken Burns Effect -->
+                        <div class="absolute inset-0 overflow-hidden">
+                            <div class="w-full h-full kenburns parallax-bg"
+                                 :style="`background-image: url(${article.image}); background-size: cover; background-position: center;`">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+                            </div>
+                        </div>
+
+                        <!-- Content Layer with Parallax -->
+                        <div class="relative h-full flex flex-col justify-end p-6 parallax-content">
+
+                            <!-- Category Badge -->
+                            <div class="mb-4">
+                                <span class="inline-block px-4 py-1.5 bg-yellow-500 text-black text-xs font-bold uppercase tracking-wider rounded-full stamp-font"
+                                      x-text="article.category"></span>
+                            </div>
+
+                            <!-- Headline -->
+                            <h2 class="text-3xl md:text-4xl font-black mb-3 leading-tight"
+                                x-text="article.headline"></h2>
+
+                            <!-- Summary -->
+                            <p class="text-base md:text-lg text-gray-200 mb-4 line-clamp-3"
+                               x-text="article.summary"></p>
+
+                            <!-- Metadata -->
+                            <div class="flex items-center gap-3 text-xs text-gray-400 mb-6">
+                                <span x-text="article.source"></span>
+                                <span>•</span>
+                                <span x-text="article.timeAgo"></span>
+                            </div>
+
+                            <!-- Neon Griot Avatar Button (REDUCED SIZE + YELLOW GLASSMORPHISM) -->
+                            <div class="flex justify-center">
+                                <button @click="openReader(article)" 
+                                        class="relative w-16 h-16 rounded-full glass-morphism-yellow flex items-center justify-center griot-pulse shadow-2xl">
+                                    <svg class="w-7 h-7 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                                    </svg>
+                                    <div class="absolute inset-0 rounded-full border-2 border-yellow-400 animate-ping opacity-50"></div>
+                                </button>
+                            </div>
+                            <p class="text-center text-sm text-yellow-400 mt-2 font-bold">Tap for Full Gist</p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Floating Comment Stream -->
+            <div class="fixed bottom-16 left-0 right-0 pointer-events-none z-30">
+                <template x-for="(comment, idx) in liveComments" :key="idx">
+                    <div class="comment-bubble bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-yellow-500/30 max-w-xs"
+                         :style="`animation-delay: ${comment.delay}s`">
+                        <p class="text-sm text-white"><span class="font-bold text-yellow-400" x-text="comment.user"></span>: <span x-text="comment.text"></span></p>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Bottom Action Bar (GLASSMORPHISM + REDUCED HEIGHT + DRUM ICON) -->
+            <div class="fixed bottom-0 left-0 right-0 z-40 glass-morphism pb-safe-bottom">
+                <div class="flex justify-around items-center py-2 px-6">
+
+                    <!-- Talking Drum Button (DRUM ICON INSTEAD OF HEART) -->
+                    <button @click="toggleLike()" 
+                            class="relative flex flex-col items-center gap-0.5 group">
+                        <div class="relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
+                             :class="isLiked ? 'bg-yellow-500' : 'bg-gray-800/50'"
+                             x-bind:class="{ 'heartbeat': showRipple }">
+                            <!-- DRUM ICON -->
+                            <svg class="w-6 h-6 transition-colors" 
+                                 :class="isLiked ? 'text-black' : 'text-gray-400'"
+                                 fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3C6.5 3 2 6.58 2 11c0 2.5 1.5 4.7 3.8 6.2-.3.7-.8 1.8-1.3 2.6-.2.4 0 .9.4 1 .1 0 .2.1.3.1.3 0 .6-.2.8-.4 1.3-1.6 2.3-2.9 2.7-3.5C9.8 17.6 10.9 18 12 18c5.5 0 10-3.58 10-8s-4.5-8-10-8zm0 14c-3.9 0-7-2.69-7-6s3.1-6 7-6 7 2.69 7 6-3.1 6-7 6z"/>
+                                <circle cx="9" cy="11" r="1"/>
+                                <circle cx="12" cy="11" r="1"/>
+                                <circle cx="15" cy="11" r="1"/>
+                            </svg>
+                            <div x-show="showRipple" class="drum-ripple"></div>
+                        </div>
+                        <span class="text-xs font-semibold" :class="isLiked ? 'text-yellow-500' : 'text-gray-400'">Drum It</span>
+                    </button>
+
+                    <!-- Add Gist Button -->
+                    <button @click="openCommentModal()" 
+                            class="flex flex-col items-center gap-0.5 group">
+                        <div class="w-12 h-12 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:bg-yellow-500 transition-all duration-300">
+                            <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-gray-400 font-semibold">Add Gist</span>
+                    </button>
+
+                    <!-- Share Button -->
+                    <button class="flex flex-col items-center gap-0.5 group">
+                        <div class="w-12 h-12 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:bg-yellow-500 transition-all duration-300">
+                            <svg class="w-6 h-6 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-gray-400 font-semibold">Share</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Add Gist Modal (Comment Input) -->
+        <div x-show="showCommentModal" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:leave="transition ease-in duration-200"
+             @click.self="closeCommentModal()"
+             class="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm">
+
+            <div class="w-full bg-gradient-to-t from-gray-900 to-gray-800 rounded-t-3xl p-6 modal-slide-up border-t-4 border-yellow-500">
+                <div class="w-12 h-1 bg-gray-600 rounded-full mx-auto mb-4"></div>
+
+                <h3 class="text-xl font-bold text-yellow-500 mb-4">Drop Your Gist 💬</h3>
+
+                <div class="mb-4">
+                    <input type="text" 
+                           x-model="commentUser"
+                           placeholder="Your name"
+                           class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 mb-3">
+
+                    <textarea x-model="commentText"
+                              placeholder="What's on your mind?"
+                              rows="3"
+                              class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 resize-none"></textarea>
+                </div>
+
+                <div class="flex gap-3">
+                    <button @click="closeCommentModal()"
+                            class="flex-1 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl font-bold transition-colors">
+                        Cancel
+                    </button>
+                    <button @click="submitComment()"
+                            class="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl font-bold transition-colors">
+                        Send Gist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full-Screen Reader Overlay -->
+        <div x-show="showReader" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:leave="transition ease-in duration-200"
+             class="fixed inset-0 z-50 bg-black overflow-y-auto">
+
+            <!-- Reader Header -->
+            <div class="sticky top-0 z-10 bg-black/95 backdrop-blur-md border-b border-gray-800">
+                <div class="flex justify-between items-center p-4">
+                    <button @click="closeReader()" 
+                            class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+
+                    <div class="flex gap-2">
+                        <button @click="changeLanguage('en')"
+                                class="px-4 py-2 rounded-lg font-bold text-sm transition-colors"
+                                :class="readerLang === 'en' ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400'">
+                            EN
+                        </button>
+                        <button @click="changeLanguage('fr')"
+                                class="px-4 py-2 rounded-lg font-bold text-sm transition-colors"
+                                :class="readerLang === 'fr' ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400'">
+                            FR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reader Content -->
+            <div class="p-6 max-w-2xl mx-auto">
+                <div class="mb-6">
+                    <span class="inline-block px-4 py-1.5 bg-yellow-500 text-black text-xs font-bold uppercase tracking-wider rounded-full mb-4"
+                          x-text="currentArticle?.category"></span>
+                    <h1 class="text-3xl md:text-4xl font-black mb-4" x-text="currentArticle?.headline"></h1>
+                    <div class="flex items-center gap-3 text-sm text-gray-400 mb-6">
+                        <span x-text="currentArticle?.source"></span>
+                        <span>•</span>
+                        <span x-text="currentArticle?.timeAgo"></span>
+                    </div>
+                </div>
+
+                <!-- Audio Player -->
+                <div class="mb-8 p-6 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-2xl border border-yellow-500/30">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <button @click="toggleAudio()"
+                                    class="w-14 h-14 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center transition-colors shadow-lg">
+                                <svg x-show="!isPlaying" class="w-7 h-7 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg x-show="isPlaying" class="w-7 h-7 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                            </button>
+
+                            <!-- Audio Waveform -->
+                            <div x-show="isPlaying" class="flex items-end h-10 gap-0.5">
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                                <div class="audio-wave-bar"></div>
+                            </div>
+                            <span x-show="!isPlaying" class="text-yellow-500 font-bold">Listen to this gist</span>
+                        </div>
+
+                        <span class="text-sm text-gray-400" x-text="readerLang === 'en' ? 'English' : 'Français'"></span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-yellow-500 transition-all duration-300" 
+                             :style="`width: ${audioProgress}%`"></div>
+                    </div>
+                </div>
+
+                <!-- Article Text -->
+                <div class="prose prose-invert prose-lg max-w-none">
+                    <p class="text-gray-300 leading-relaxed mb-4" x-text="currentArticle?.content"></p>
+
+                    <blockquote class="border-l-4 border-yellow-500 pl-4 italic text-gray-400 my-6">
+                        "This is a highlighted quote from the article that provides important context."
+                    </blockquote>
+
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Experts believe this change will affect over 50% of the population in Douala and Yaoundé.
+                    </p>
+
+                    <p class="text-gray-300 leading-relaxed">
+                        Stay tuned for more updates as the situation develops over the weekend.
+                    </p>
+                </div>
+
+                <!-- Sources -->
+                <div class="mt-8 p-4 bg-gray-900 rounded-xl border border-gray-800">
+                    <h3 class="text-sm font-bold text-yellow-500 uppercase tracking-wider mb-2">Sources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-blue-400 hover:underline">Original Article Source</a></li>
+                        <li><a href="#" class="text-sm text-blue-400 hover:underline">Additional Reference</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function gistMeApp() {
+            return {
+                // State
+                moodSelected: false,
+                currentMood: '',
+                currentIndex: 0,
+                progressPercentage: 0,
+                isLiked: false,
+                showRipple: false,
+                showCommentModal: false,
+                showReader: false,
+                isPlaying: false,
+                audioProgress: 0,
+                readerLang: 'en',
+                commentUser: '',
+                commentText: '',
+                liveComments: [],
+                currentArticle: null,
+
+                // Mock Articles
+                articles: [
+                    {
+                        id: 1,
+                        headline: "Major Infrastructure Project Announced in Douala",
+                        summary: "Government unveils ambitious plan to modernize the port city",
+                        category: "DEVELOPMENT",
+                        source: "CameroonToday",
+                        timeAgo: "2h ago",
+                        image: "https://images.unsplash.com/photo-1590642916589-592bca10dfbf?w=800&q=80",
+                        content: "The Minister of Public Works has announced a groundbreaking infrastructure initiative that will transform the economic landscape of Douala. This comprehensive development project includes the construction of new highways, the expansion of port facilities, and the implementation of smart city technologies. The summary of the news is presented here vividly."
+                    },
+                    {
+                        id: 2,
+                        headline: "Tech Startup Raises $5M to Expand Across West Africa",
+                        summary: "Innovative fintech solution gains international investor attention",
+                        category: "BUSINESS",
+                        source: "AfroTech News",
+                        timeAgo: "5h ago",
+                        image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80",
+                        content: "A Cameroonian fintech startup has successfully secured $5 million in Series A funding from international venture capital firms. The company, which provides mobile payment solutions for rural communities, plans to expand its operations throughout West Africa. Industry experts predict significant impact on financial inclusion across the region."
+                    },
+                    {
+                        id: 3,
+                        headline: "National Football Team Qualifies for Continental Championship",
+                        summary: "Indomitable Lions secure spot after dramatic victory",
+                        category: "SPORTS",
+                        source: "Sports Cameroon",
+                        timeAgo: "1d ago",
+                        image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+                        content: "The national football team has qualified for the upcoming continental championship after a thrilling 3-2 victory in their final qualifying match. The team showed remarkable resilience, coming from behind to secure the win. Fans across the nation celebrated the achievement with street parties continuing late into the night."
+                    }
+                ],
+
+                // Methods
+                initApp() {
+                    console.log('GistMe App Initialized');
+                    this.startCommentSimulation();
+                },
+
+                selectMood(mood) {
+                    this.currentMood = mood;
+                    this.moodSelected = true;
+                    console.log('Mood selected:', mood);
+                },
+
+                handleScroll(event) {
+                    const container = event.target;
+                    const scrollHeight = container.scrollHeight - container.clientHeight;
+                    const scrollTop = container.scrollTop;
+
+                    // Update progress
+                    this.progressPercentage = Math.round((scrollTop / scrollHeight) * 100);
+
+                    // Calculate current article index
+                    const articleHeight = container.clientHeight;
+                    this.currentIndex = Math.floor(scrollTop / articleHeight);
+                },
+
+                toggleLike() {
+                    this.isLiked = !this.isLiked;
+                    this.showRipple = true;
+
+                    setTimeout(() => {
+                        this.showRipple = false;
+                    }, 600);
+                },
+
+                openCommentModal() {
+                    this.showCommentModal = true;
+                },
+
+                closeCommentModal() {
+                    this.showCommentModal = false;
+                    this.commentUser = '';
+                    this.commentText = '';
+                },
+
+                submitComment() {
+                    if (this.commentText.trim() && this.commentUser.trim()) {
+                        this.liveComments.push({
+                            user: this.commentUser,
+                            text: this.commentText,
+                            delay: 0
+                        });
+
+                        setTimeout(() => {
+                            this.liveComments.shift();
+                        }, 5000);
+
+                        this.closeCommentModal();
+                    }
+                },
+
+                startCommentSimulation() {
+                    const sampleComments = [
+                        { user: "Nkeng", text: "This is huge! 🔥" },
+                        { user: "Amina", text: "Finally some good news!" },
+                        { user: "Kwame", text: "About time! 👏" },
+                        { user: "Fanta", text: "Let's go! 🎉" }
+                    ];
+
+                    let index = 0;
+                    setInterval(() => {
+                        if (this.moodSelected && this.liveComments.length < 3) {
+                            this.liveComments.push({
+                                ...sampleComments[index % sampleComments.length],
+                                delay: 0
+                            });
+
+                            setTimeout(() => {
+                                this.liveComments.shift();
+                            }, 5000);
+
+                            index++;
+                        }
+                    }, 8000);
+                },
+
+                openReader(article) {
+                    this.currentArticle = article;
+                    this.showReader = true;
+                    this.isPlaying = false;
+                    this.audioProgress = 0;
+                },
+
+                closeReader() {
+                    this.showReader = false;
+                    this.isPlaying = false;
+                    this.audioProgress = 0;
+                },
+
+                changeLanguage(lang) {
+                    this.readerLang = lang;
+                    this.isPlaying = false;
+                    this.audioProgress = 0;
+                },
+
+                toggleAudio() {
+                    this.isPlaying = !this.isPlaying;
+
+                    if (this.isPlaying) {
+                        this.audioInterval = setInterval(() => {
+                            if (this.audioProgress < 100) {
+                                this.audioProgress += 1;
+                            } else {
+                                this.isPlaying = false;
+                                this.audioProgress = 0;
+                                clearInterval(this.audioInterval);
+                            }
+                        }, 200);
+                    } else {
+                        clearInterval(this.audioInterval);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
