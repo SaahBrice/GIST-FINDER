@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GistMe - Refined</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE --- */
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #000; color: white; overflow: hidden; }
+        h1, h2, .brand-font { font-family: 'Carter One', cursive; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* --- SMOOTH SCROLL SNAP --- */
+        .feed-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .feed-card {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- THE "KEN BURNS" DEPTH EFFECT (Better than Parallax on mobile) --- */
+        /* The image slowly zooms in to create a cinematic feel */
+        @keyframes subtle-zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+        .zoom-bg {
+            animation: subtle-zoom 20s ease-out forwards;
+        }
+
+        /* --- ANIMATIONS --- */
+        .slide-up { animation: slideUp 0.6s ease-out forwards; opacity: 0; transform: translateY(30px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* The Griot Face Pulse (Subtle) */
+        @keyframes glow-pulse {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.4)); }
+            50% { filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.8)); }
+        }
+        .griot-glow { animation: glow-pulse 3s infinite; }
+
+        /* Karaoke Highlight */
+        .highlight-text {
+            background: linear-gradient(120deg, #eab308 0%, #eab308 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 0.2em;
+            background-position: 0 88%;
+            transition: background-size 0.25s ease-in;
+            color: white;
+        }
+        .highlight-active {
+            background-size: 100% 100%; /* Fills the text background */
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+    <div x-data="gistApp()">
+
+        <div class="fixed top-0 left-0 w-full z-40 p-5 flex justify-between items-start pointer-events-none">
+            <span class="brand-font text-2xl drop-shadow-md text-white">GistMe</span>
+            </div>
+
+        <div class="feed-container no-scrollbar">
+            
+            <template x-for="story in stories" :key="story.id">
+                <div class="feed-card flex flex-col justify-end">
+                    
+                    <div class="absolute inset-0 z-0">
+                        <div class="w-full h-full zoom-bg bg-cover bg-center"
+                             :style="story.thumbnail ? `background-image: url('${story.thumbnail}');` : 'background-color: #111;'">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                    </div>
+
+                    <div class="absolute top-5 right-5 z-20 flex items-center space-x-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-white">
+                            <span x-text="story.liveCount"></span> Reading
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 p-6 pb-28 w-full max-w-lg mx-auto">
+                        
+                        <div class="mb-3 slide-up">
+                            <span class="px-2 py-1 text-[10px] font-bold bg-yellow-500 text-black uppercase rounded-sm" x-text="story.category"></span>
+                        </div>
+
+                        <h2 class="text-4xl leading-tight mb-3 font-bold text-white drop-shadow-lg slide-up" 
+                            style="animation-delay: 100ms; text-shadow: 2px 2px 0 #000;"
+                            x-text="story.title"></h2>
+
+                        <p class="text-gray-200 text-lg line-clamp-2 slide-up" 
+                           style="animation-delay: 200ms"
+                           x-text="story.summary"></p>
+
+                        <div class="mt-4 flex items-center space-x-2 text-xs text-gray-400 font-bold uppercase tracking-widest slide-up" style="animation-delay: 300ms">
+                            <span>via <span x-text="story.source"></span></span>
+                            <span>•</span>
+                            <span x-text="story.time"></span>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-6 left-0 right-0 flex justify-center z-30 slide-up" style="animation-delay: 400ms">
+                        <button @click="openReader(story)" class="group flex flex-col items-center gap-2 active:scale-95 transition-transform duration-200">
+                            <div class="relative w-16 h-16 griot-glow">
+                                <div class="absolute inset-0 bg-purple-900/80 rounded-full border-2 border-purple-500/50 backdrop-blur-sm"></div>
+                                <svg class="absolute inset-0 w-full h-full p-3 text-white fill-current" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="#1e1b4b" stroke="currentColor"/>
+                                    <circle cx="8.5" cy="9.5" r="1.5" class="text-yellow-400" fill="currentColor"/>
+                                    <circle cx="15.5" cy="9.5" r="1.5" class="text-yellow-400" fill="currentColor"/>
+                                    <path d="M9 14.5C9 14.5 10.5 16 12 16C13.5 16 15 14.5 15 14.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-purple-200 bg-black/50 px-2 py-0.5 rounded-full">Gist Me</span>
+                        </button>
+                    </div>
+
+                    <div class="absolute right-4 bottom-24 flex flex-col space-y-6 z-30">
+                        <button class="flex flex-col items-center opacity-80 hover:opacity-100">
+                            <div class="bg-white/10 p-3 rounded-full backdrop-blur border border-white/20">❤️</div>
+                            <span class="text-[10px] font-bold mt-1">1.2k</span>
+                        </button>
+                        <button class="flex flex-col items-center opacity-80 hover:opacity-100">
+                            <div class="bg-white/10 p-3 rounded-full backdrop-blur border border-white/20">📤</div>
+                        </button>
+                    </div>
+
+                </div>
+            </template>
+        </div>
+
+
+        <div x-show="activeStory" 
+             style="display: none;"
+             class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full opacity-0"
+             x-transition:enter-end="translate-y-0 opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="translate-y-0 opacity-100"
+             x-transition:leave-end="translate-y-full opacity-0">
+
+            <div class="flex items-center justify-between p-4 border-b border-gray-800 bg-black">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Reading Mode</span>
+                <button @click="closeReader()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-xs font-bold transition">
+                    ✕ CLOSE
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-scroll p-6 pb-24">
+                <template x-if="activeStory">
+                    <div class="max-w-xl mx-auto">
+                        <div class="w-full h-56 rounded-xl bg-cover bg-center mb-6 shadow-2xl border border-gray-800"
+                             :style="activeStory.thumbnail ? `background-image: url('${activeStory.thumbnail}');` : 'background-color: #222;'">
+                        </div>
+
+                        <h1 class="text-3xl font-bold mb-2 leading-tight brand-font" x-text="activeStory.title"></h1>
+                        <div class="text-sm text-gray-500 font-bold mb-6 uppercase flex items-center space-x-2">
+                            <span x-text="activeStory.time"></span>
+                            <span>•</span>
+                            <span x-text="activeStory.source"></span>
+                        </div>
+
+                        <div class="bg-gray-900 rounded-xl p-4 mb-8 border border-gray-800 flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <button @click="toggleAudio()" class="w-10 h-10 rounded-full bg-yellow-500 text-black flex items-center justify-center font-bold pl-1 hover:scale-105 transition">
+                                    <span x-text="isAudioPlaying ? '⏸' : '▶'"></span>
+                                </button>
+                                <div>
+                                    <div class="text-xs text-gray-400 font-bold uppercase">Listen to Gist</div>
+                                    <div class="text-sm font-bold text-white">English Summary</div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-0.5 items-end h-6">
+                                <template x-for="i in 5">
+                                    <div class="w-1 bg-yellow-500/50 rounded-full" 
+                                         :class="isAudioPlaying ? 'animate-pulse' : ''"
+                                         :style="`height: ${Math.random() * 100}%; animation-delay: ${i * 0.1}s`"></div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="prose prose-invert prose-lg leading-relaxed text-gray-300">
+                            <p class="text-xl text-white font-medium mb-6 highlight-text" :class="isAudioPlaying ? 'highlight-active' : ''" x-text="activeStory.summary"></p>
+                            
+                            <p>Here is where the full detailed gist would go. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Unlike the feed, here you can read everything comfortably.</p>
+                            
+                            <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The government stated that new regulations will take effect immediately.</p>
+                            
+                            <blockquote class="border-l-4 border-yellow-500 pl-4 italic my-6 text-gray-400">
+                                "This is a direct quote from the article that adds context to the situation."
+                            </blockquote>
+                            
+                            <p>Final paragraph wrapping up the gist. Swipe down to close or click the close button.</p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <div class="p-4 border-t border-gray-800 bg-black">
+                <input type="text" placeholder="Add a comment..." class="w-full bg-gray-900 border-none rounded-full px-4 py-3 text-sm text-white focus:ring-1 focus:ring-yellow-500">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function gistApp() {
+            return {
+                activeStory: null,
+                isAudioPlaying: false,
+                
+                stories: [
+                    { 
+                        id: 1, 
+                        category: "Tech", 
+                        title: "Silicon Mountain Gets $2M Boost", 
+                        summary: "Investors flood Buea with capital as local startups show incredible promise.", 
+                        source: "TechCabal", 
+                        time: "2h ago", 
+                        liveCount: 342,
+                        thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop" 
+                    },
+                    { 
+                        id: 2, 
+                        category: "Culture", 
+                        title: "Libianca Tops Global Charts", 
+                        summary: "The 'People' hitmaker makes history again this week.", 
+                        source: "Trace", 
+                        time: "5h ago", 
+                        liveCount: 890,
+                        thumbnail: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=1000&auto=format&fit=crop" 
+                    },
+                    { 
+                        id: 3, 
+                        category: "News", 
+                        title: "New Bridge Construction Starts", 
+                        summary: "Traffic diversions expected in Douala as the Wouri bridge expansion begins.", 
+                        source: "CRTV", 
+                        time: "1d ago", 
+                        liveCount: 120,
+                        thumbnail: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?q=80&w=1000&auto=format&fit=crop" 
+                    }
+                ],
+
+                openReader(story) {
+                    this.activeStory = story;
+                    this.isAudioPlaying = false; // Reset audio state
+                },
+
+                closeReader() {
+                    this.activeStory = null;
+                    this.isAudioPlaying = false;
+                },
+
+                toggleAudio() {
+                    this.isAudioPlaying = !this.isAudioPlaying;
+                    // In real app: this.isAudioPlaying ? audio.play() : audio.pause();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GistMe - Daily Gist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Black+Ops+One&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE STYLES --- */
+        body { font-family: 'Inter', sans-serif; background-color: #000; }
+        h1, h2, h3, .brand-font { font-family: 'Carter One', cursive; }
+        .stamp-font { font-family: 'Black Ops One', cursive; } /* Stencil look for the stamp */
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- TEXTURE --- */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; opacity: 0.07;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- PATTERNS (Afro-Futurist) --- */
+        .pattern-kente { background: repeating-linear-gradient(45deg, #b45309, #b45309 10px, #f59e0b 10px, #f59e0b 20px); }
+        .pattern-mud { background-image: radial-gradient(#444 15%, transparent 16%), radial-gradient(#444 15%, transparent 16%); background-color: #1c1917; background-position: 0 0, 10px 10px; background-size: 20px 20px; }
+        .pattern-geo { background: linear-gradient(135deg, #1e3a8a 25%, transparent 25%) -10px 0, linear-gradient(225deg, #1e3a8a 25%, transparent 25%) -10px 0, linear-gradient(315deg, #1e3a8a 25%, transparent 25%), linear-gradient(45deg, #1e3a8a 25%, transparent 25%); background-size: 20px 20px; background-color: #172554; }
+
+        /* --- ANIMATIONS --- */
+        .slide-up { animation: slideUp 0.5s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* The "GIST BUBBLE" Pulse */
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 15px rgba(234, 179, 8, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); transform: scale(1); }
+        }
+        .gist-btn-anim { animation: pulse-gold 2s infinite; }
+
+        /* THE RUBBER STAMP ANIMATION */
+        @keyframes stamp-slam {
+            0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+            40% { transform: scale(0.9) rotate(-8deg); opacity: 1; }
+            60% { transform: scale(1.05) rotate(-8deg); }
+            100% { transform: scale(1) rotate(-8deg); opacity: 0; } /* Fades out at end */
+        }
+        /* We keep opacity 1 at the end so it sticks for a moment via JS logic, or we let it fade. 
+           Let's make it stay visible for a second then vanish. */
+        @keyframes stamp-slam-hold {
+            0% { transform: scale(5) rotate(-20deg); opacity: 0; }
+            20% { transform: scale(1) rotate(-8deg); opacity: 1; }
+            80% { transform: scale(1) rotate(-8deg); opacity: 1; }
+            100% { transform: scale(1.2) rotate(-8deg); opacity: 0; }
+        }
+        .stamp-anim { animation: stamp-slam-hold 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        /* KARAOKE HIGHLIGHT */
+        .karaoke-active {
+            background-color: #fbbf24; /* Amber-400 */
+            color: black;
+            box-shadow: 0 0 10px #fbbf24;
+            padding: 0 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="overflow-hidden fixed inset-0 text-white">
+
+    <div class="noise-overlay"></div>
+
+    <div x-data="gistMeApp()" x-init="initApp()" class="h-full w-full relative">
+
+        <div class="fixed top-0 left-0 w-full z-40 bg-black/90 backdrop-blur-md border-b border-gray-800 pt-safe-top">
+            <div class="flex justify-between items-center px-4 py-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Daily Gist Meter</span>
+                <span class="text-xs font-bold text-yellow-500" x-text="progressPercentage + '%'"></span>
+            </div>
+            <div class="w-full h-1 bg-gray-800">
+                <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(250,204,21,0.7)]"
+                     :style="`width: ${progressPercentage}%`"></div>
+            </div>
+        </div>
+
+        <div x-show="showMoodSelector" 
+             x-transition.opacity.duration.500ms
+             class="absolute inset-0 z-50 bg-gray-900 flex flex-col items-center justify-center p-6 text-center">
+            
+            <div class="absolute inset-0 pattern-mud opacity-50 z-0"></div>
+            
+            <div class="relative z-10 space-y-8">
+                <div>
+                    <h1 class="text-6xl text-transparent bg-clip-text bg-gradient-to-br from-yellow-400 to-red-600" style="filter: drop-shadow(2px 2px 0px #000);">
+                        GistMe
+                    </h1>
+                    <p class="text-gray-300 mt-2 font-medium">Choose your vibe to start gisting.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-5 w-full max-w-xs">
+                    <button @click="selectMood('Curious')" class="group p-5 bg-indigo-900/90 border-b-4 border-indigo-600 rounded-xl active:border-b-0 active:translate-y-1 transition">
+                        <div class="text-4xl group-hover:scale-110 transition">🤔</div>
+                        <span class="brand-font text-white mt-2 block">Curious</span>
+                    </button>
+                    <button @click="selectMood('Serious')" class="group p-5 bg-red-900/90 border-b-4 border-red-600 rounded-xl active:border-b-0 active:translate-y-1 transition">
+                        <div class="text-4xl group-hover:scale-110 transition">🧐</div>
+                        <span class="brand-font text-white mt-2 block">Serious</span>
+                    </button>
+                    <button @click="selectMood('Chill')" class="group p-5 bg-teal-900/90 border-b-4 border-teal-600 rounded-xl active:border-b-0 active:translate-y-1 transition">
+                        <div class="text-4xl group-hover:scale-110 transition">😌</div>
+                        <span class="brand-font text-white mt-2 block">Chill</span>
+                    </button>
+                    <button @click="selectMood('Hyped')" class="group p-5 bg-yellow-700/90 border-b-4 border-yellow-500 rounded-xl active:border-b-0 active:translate-y-1 transition relative">
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-xs px-2 rounded-full font-bold animate-bounce">HOT</span>
+                        <div class="text-4xl group-hover:scale-110 transition">🤩</div>
+                        <span class="brand-font text-white mt-2 block">Hyped</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="!showMoodSelector" class="h-full w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar pt-10">
+            <template x-for="(story, index) in filteredStories" :key="story.id">
+                <div class="h-full w-full snap-start relative flex flex-col justify-end shrink-0 border-b border-gray-800"
+                     @dblclick="triggerStamp(story.id)">
+
+                    <div class="absolute inset-0 z-0" 
+                         :class="story.thumbnail ? '' : getPattern(story.mood)"
+                         :style="story.thumbnail ? `background-image: url('${story.thumbnail}'); background-size: cover; background-position: center;` : ''">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent"></div>
+                    </div>
+
+                    <div x-show="stampedStoryId === story.id" 
+                         class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none overflow-hidden">
+                        <div class="stamp-anim border-4 border-red-600 text-red-600 px-8 py-4 rounded-lg transform -rotate-12 bg-red-900/20 backdrop-blur-sm">
+                            <h1 class="stamp-font text-5xl md:text-6xl tracking-widest uppercase" style="text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);">
+                                GISTED
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 p-6 pb-24 space-y-3">
+                        <span class="inline-block px-3 py-1 text-xs font-black bg-white text-black uppercase tracking-widest rounded-sm" x-text="story.source"></span>
+                        
+                        <h2 class="text-4xl leading-none text-white slide-up" 
+                            style="text-shadow: 2px 2px 0 black;"
+                            x-text="story.title"></h2>
+                        
+                        <p class="text-lg text-gray-200 line-clamp-3 font-medium slide-up" 
+                           style="animation-delay: 100ms; text-shadow: 1px 1px 1px black;"
+                           x-text="story.summary"></p>
+                    </div>
+
+                    <div class="absolute bottom-8 left-0 right-0 z-20 flex justify-center slide-up" style="animation-delay: 200ms">
+                        <button @click="openReader(story)"
+                                class="gist-btn-anim bg-yellow-500 text-black w-20 h-20 rounded-full border-4 border-black flex items-center justify-center shadow-2xl relative group">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 group-hover:scale-110 transition">
+                                <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                            </svg>
+                            <div class="absolute -bottom-8 bg-black text-white text-xs font-bold px-2 py-1 rounded">
+                                GIST ME
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="absolute right-4 bottom-32 z-20 flex flex-col space-y-6">
+                        <button class="flex flex-col items-center opacity-90 hover:opacity-100">
+                            <div class="bg-gray-800/60 p-3 rounded-full backdrop-blur">👍</div>
+                            <span class="text-xs font-bold mt-1">1.2k</span>
+                        </button>
+                        <button class="flex flex-col items-center opacity-90 hover:opacity-100">
+                            <div class="bg-gray-800/60 p-3 rounded-full backdrop-blur">💬</div>
+                            <span class="text-xs font-bold mt-1">402</span>
+                        </button>
+                         <button class="flex flex-col items-center opacity-90 hover:opacity-100">
+                            <div class="bg-green-600/80 p-3 rounded-full backdrop-blur">📲</div>
+                            <span class="text-xs font-bold mt-1">Share</span>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div x-show="activeStory" 
+             x-transition.opacity
+             class="absolute inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col" 
+             style="display: none;">
+            
+            <div class="flex items-center justify-between p-4 border-b border-gray-800 bg-black z-50">
+                <span class="text-xs font-bold text-gray-400">NOW READING</span>
+                <button @click="activeStory = null" class="bg-gray-800 text-white px-4 py-2 rounded-full text-xs font-bold border border-gray-600">
+                    ✕ CLOSE
+                </button>
+            </div>
+
+            <div class="overflow-y-scroll flex-1 p-6 pb-20">
+                <template x-if="activeStory">
+                    <div class="max-w-lg mx-auto">
+                        <img :src="activeStory.thumbnail ? activeStory.thumbnail : ''" 
+                             class="w-full h-48 object-cover rounded-xl mb-6 border-2 border-gray-800" 
+                             x-show="activeStory.thumbnail">
+                        
+                        <h1 class="text-3xl font-black mb-2 leading-tight" x-text="activeStory.title"></h1>
+                        <div class="flex items-center space-x-2 text-gray-400 text-sm mb-6 font-mono">
+                            <span x-text="activeStory.time"></span> • <span class="text-yellow-500">Audio Playing...</span>
+                        </div>
+
+                        <div class="prose prose-invert prose-lg leading-loose">
+                            <p class="text-gray-400">
+                                <span class="transition duration-300" :class="karaokeStep === 0 ? 'karaoke-active' : ''">
+                                    The summary of the news is presented here vividly.
+                                </span>
+                                <span class="transition duration-300" :class="karaokeStep === 1 ? 'karaoke-active' : ''" x-text="activeStory.summary"></span>
+                            </p>
+                            
+                            <hr class="border-gray-800 my-6">
+
+                            <p class="text-gray-300 text-xl font-medium">
+                                <span class="transition duration-300" :class="karaokeStep === 2 ? 'karaoke-active' : ''">
+                                    "This is the quote of the day," said the minister during the press conference.
+                                </span>
+                                <span class="transition duration-300" :class="karaokeStep === 3 ? 'karaoke-active' : ''">
+                                    Experts believe this change will affect over 50% of the population in Douala and Yaoundé.
+                                </span>
+                                <span class="transition duration-300" :class="karaokeStep === 4 ? 'karaoke-active' : ''">
+                                    Stay tuned for more updates as the situation develops over the weekend.
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <div class="p-4 bg-gray-900 border-t border-gray-800 flex items-center justify-between">
+                <button @click="prevLine()" class="text-2xl">⏮</button>
+                <div class="flex flex-col items-center">
+                    <span class="text-xs font-mono text-yellow-500 animate-pulse">AUDIO PLAYING</span>
+                    <div class="flex space-x-1 mt-1 h-3 items-end">
+                        <div class="w-1 bg-white h-full animate-bounce"></div>
+                        <div class="w-1 bg-white h-2 animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-1 bg-white h-3 animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>
+                <button @click="nextLine()" class="text-2xl">⏭</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function gistMeApp() {
+            return {
+                showMoodSelector: true,
+                currentMood: '',
+                activeStory: null,
+                stampedStoryId: null,
+                karaokeStep: 0, // Tracks which sentence is highlighted
+                karaokeInterval: null,
+                
+                // --- PROGRESS LOGIC (Sticky Factor) ---
+                readCount: 0,
+                totalDailyGoal: 10, // Aim to read 10 stories a day
+                
+                initApp() {
+                    // Load progress from LocalStorage (No Auth Persistence)
+                    const saved = localStorage.getItem('gistMeCount');
+                    const savedDate = localStorage.getItem('gistMeDate');
+                    const today = new Date().toDateString();
+
+                    if (savedDate === today && saved) {
+                        this.readCount = parseInt(saved);
+                    } else {
+                        // Reset if new day
+                        this.readCount = 0;
+                        localStorage.setItem('gistMeDate', today);
+                    }
+                },
+
+                get progressPercentage() {
+                    let pct = (this.readCount / this.totalDailyGoal) * 100;
+                    return pct > 100 ? 100 : Math.round(pct);
+                },
+
+                stories: [
+                    { id: 1, mood: "Hyped", title: "Camer Tech Startup Wins Big!", summary: "A local Buea team just secured $1M funding to digitize market spaces.", thumbnail: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop", source: "TechCabal", time: "2h" },
+                    { id: 2, mood: "Serious", title: "New Traffic Laws in Effect Today", summary: "Police launch crackdown on undocumented bikes in Douala starting this morning.", thumbnail: null, source: "CRTV", time: "4h" },
+                    { id: 3, mood: "Chill", title: "Weekend Vibes: Kribi Beach Festival", summary: "The annual seafood and music fest kicks off this Friday. Here is the lineup.", thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop", source: "EnjoyCamer", time: "6h" },
+                    { id: 4, mood: "Curious", title: "Why are Plantain Prices Rising?", summary: "We investigate the supply chain issues causing the sudden spike in local markets.", thumbnail: null, source: "BizCamer", time: "8h" },
+                    { id: 5, mood: "Hyped", title: "Francis Ngannou Returns Home!", summary: "The champ touches down in Yaoundé to a massive crowd of supporters.", thumbnail: null, source: "SportNews", time: "10h" },
+                    { id: 6, mood: "Serious", title: "Education Minister Speaks on Exams", summary: "Dates for the GCE and Baccalaureate have been officially confirmed today.", thumbnail: null, source: "GovTech", time: "12h" },
+                    { id: 7, mood: "Chill", title: "New Afro-Jazz Album Drops", summary: "Richard Bona's latest collaboration is the perfect soundtrack for your evening.", thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1000&auto=format&fit=crop", source: "MusicMag", time: "1d" }
+                ],
+
+                get filteredStories() {
+                    if (!this.currentMood) return this.stories;
+                    return this.stories.filter(s => s.mood === this.currentMood).concat(this.stories.filter(s => s.mood !== this.currentMood));
+                },
+
+                selectMood(mood) {
+                    this.currentMood = mood;
+                    setTimeout(() => { this.showMoodSelector = false; }, 400);
+                },
+
+                // OPEN READER & INCREMENT PROGRESS
+                openReader(story) {
+                    this.activeStory = story;
+                    this.karaokeStep = 0;
+                    
+                    // Increment Progress (Sticky Mechanic)
+                    if (this.readCount < this.totalDailyGoal) {
+                        this.readCount++;
+                        localStorage.setItem('gistMeCount', this.readCount);
+                    }
+
+                    // Simulate Karaoke
+                    if (this.karaokeInterval) clearInterval(this.karaokeInterval);
+                    this.karaokeInterval = setInterval(() => {
+                        this.karaokeStep = (this.karaokeStep + 1) % 5;
+                    }, 2500); // Switch highlighted text every 2.5s
+                },
+
+                // TRIGGER STAMP ANIMATION
+                triggerStamp(id) {
+                    this.stampedStoryId = id;
+                    // Trigger haptic feedback if available in mobile browser
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    
+                    setTimeout(() => {
+                        this.stampedStoryId = null;
+                    }, 1200);
+                },
+
+                // Helper for pattern classes
+                getPattern(mood) {
+                    if (mood === 'Hyped') return 'pattern-kente';
+                    if (mood === 'Serious') return 'pattern-geo';
+                    return 'pattern-mud';
+                },
+                
+                // Manual Karaoke controls
+                nextLine() { this.karaokeStep = (this.karaokeStep + 1) % 5; },
+                prevLine() { this.karaokeStep = (this.karaokeStep - 1 + 5) % 5; }
+            }
+        }
+    </script>
+</body>
+</html>

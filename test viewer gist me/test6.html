@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GistMe - Parallax Fixed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE --- */
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #000; color: white; overflow: hidden; margin: 0; }
+        h1, h2, .brand-font { font-family: 'Carter One', cursive; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* --- FIXED 3D PARALLAX --- */
+        .parallax-wrapper {
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            perspective: 1px; /* Creates the 3D space */
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .parallax-card {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            transform-style: preserve-3d;
+            scroll-snap-align: start;
+            background-color: #000; /* CRITICAL: Prevents white gaps */
+            overflow: hidden; /* CRITICAL: Clips the 3D children to card bounds */
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            /* Scale 2.1 ensures no edges show. TranslateZ -1px creates depth */
+            transform: translateZ(-1px) scale(2.1); 
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+        }
+
+        .parallax-content {
+            z-index: 10;
+            width: 100%;
+            padding-bottom: 20px;
+            transform: translateZ(0); /* Locks content to foreground */
+            pointer-events: none;
+        }
+        .parallax-content > * { pointer-events: auto; } 
+
+        /* --- FLOATING COMMENTS --- */
+        .comment-stream {
+            position: absolute; bottom: 140px; left: 20px; width: 250px; height: 300px;
+            pointer-events: none; overflow: hidden; 
+            mask-image: linear-gradient(to top, black 20%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, black 20%, transparent 100%);
+        }
+        .floating-bubble {
+            position: absolute; bottom: -50px; left: 0;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            padding: 4px 12px; border-radius: 99px;
+            font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);
+            animation: floatUp 7s forwards ease-out;
+            white-space: nowrap;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            10% { transform: translateY(-20px) scale(1); opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-400px) scale(0.9); opacity: 0; }
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes drum-beat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.4) rotate(-10deg); }
+            40% { transform: scale(0.9) rotate(5deg); }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .drum-hit { animation: drum-beat 0.5s ease-out; color: #ef4444; }
+        
+        .ripple-effect {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            border: 2px solid #ef4444;
+            animation: ripple 0.8s ease-out; opacity: 0;
+        }
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        @keyframes neon-pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px #a855f7); }
+            50% { filter: drop-shadow(0 0 10px #d8b4fe); }
+        }
+        .griot-face { animation: neon-pulse 3s infinite; }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <div x-data="gistApp()">
+
+        <div class="fixed top-0 left-0 w-full z-40 p-5 pointer-events-none bg-gradient-to-b from-black/80 to-transparent">
+            <span class="brand-font text-2xl drop-shadow-md text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">GistMe</span>
+        </div>
+
+        <div class="parallax-wrapper no-scrollbar">
+            
+            <template x-for="(story, index) in stories" :key="story.id">
+                <div class="parallax-card group" :style="'z-index: ' + (50 - index)">
+                    
+                    <div class="parallax-bg bg-gray-900"
+                         :style="story.thumbnail ? `background-image: url('${story.thumbnail}');` : ''">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+                    </div>
+
+                    <div class="parallax-content relative w-full max-w-lg mx-auto px-6 pb-28">
+                        
+                        <div class="comment-stream">
+                             <template x-for="comment in activeComments.filter(c => c.storyId === story.id)" :key="comment.id">
+                                 <div class="floating-bubble"
+                                      :style="`left: ${Math.random() * 20}px; animation-duration: ${5 + Math.random() * 3}s; animation-delay: ${Math.random()}s`">
+                                     <span class="font-bold text-yellow-400" x-text="comment.user + ':'"></span> 
+                                     <span x-text="comment.text"></span>
+                                 </div>
+                             </template>
+                        </div>
+
+                        <div class="relative z-10">
+                            <span class="px-2 py-1 text-[10px] font-bold bg-yellow-500 text-black uppercase rounded-sm mb-2 inline-block" x-text="story.category"></span>
+                            <h2 class="text-4xl leading-tight mb-2 font-bold drop-shadow-lg" style="text-shadow: 2px 2px 0 black;" x-text="story.title"></h2>
+                            <p class="text-gray-200 text-lg line-clamp-2 drop-shadow-md" x-text="story.summary"></p>
+                        </div>
+
+                        <div class="absolute right-4 bottom-28 flex flex-col space-y-6 items-center z-50">
+                            
+                            <button @click="toggleLike(story.id)" class="group/like relative flex flex-col items-center">
+                                <div class="relative p-3 rounded-full bg-white/10 backdrop-blur border border-white/20 transition-all duration-300"
+                                     :class="story.liked ? 'bg-red-500/20 border-red-500' : ''">
+                                    
+                                    <div x-show="story.justLiked" class="ripple-effect"></div>
+                                    
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" 
+                                         class="w-8 h-8 transition-transform" 
+                                         :class="story.justLiked ? 'drum-hit' : (story.liked ? 'text-red-500' : 'text-white')">
+                                        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                    </svg>
+                                </div>
+                                <span class="text-[10px] font-bold mt-1" x-text="story.likes"></span>
+                            </button>
+                            
+                            <button @click="openCommentModal(story.id)" class="flex flex-col items-center hover:scale-110 transition">
+                                <div class="bg-white/10 p-3 rounded-full backdrop-blur border border-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                                        <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.915 6.109.103.082.197.169.282.261l.003.004z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span class="text-[10px] font-bold mt-1" x-text="getCommentCount(story.id)"></span>
+                            </button>
+
+                             <button class="bg-white/10 p-3 rounded-full backdrop-blur border border-white/20 hover:scale-110 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                                    <path fill-rule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="absolute bottom-6 left-0 right-0 flex justify-center z-40">
+                            <button @click="openReader(story)" class="relative group active:scale-95 transition duration-200">
+                                <div class="absolute inset-0 bg-purple-600 rounded-full blur-xl opacity-40 group-hover:opacity-70 transition duration-500"></div>
+                                <svg class="w-20 h-20 griot-face text-white fill-current relative z-10" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="#1e1b4b" stroke="currentColor"/>
+                                    <circle cx="8.5" cy="9.5" r="1.5" class="text-purple-400" fill="currentColor"/>
+                                    <circle cx="15.5" cy="9.5" r="1.5" class="text-purple-400" fill="currentColor"/>
+                                    <rect x="10" y="14" width="4" height="2" rx="1" class="text-yellow-400" fill="currentColor"></rect>
+                                </svg>
+                                <div class="absolute -bottom-4 left-0 right-0 text-center">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-purple-200 bg-black/60 px-2 py-0.5 rounded-full border border-purple-500/30">Get the Gist</span>
+                                </div>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div x-show="showCommentInput" 
+             style="display: none;"
+             class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center"
+             x-transition.opacity
+             @click.self="showCommentInput = false">
+            
+            <div class="bg-gray-900 border-t border-gray-700 w-full sm:w-96 p-6 rounded-t-3xl sm:rounded-2xl space-y-4 shadow-2xl transform transition-transform"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="translate-y-full"
+                 x-transition:enter-end="translate-y-0">
+                
+                <h3 class="font-bold text-gray-400 uppercase text-xs tracking-widest">Add to the Gist</h3>
+                <textarea x-model="newCommentText" 
+                          class="w-full bg-black/50 border border-gray-600 rounded-xl p-4 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" 
+                          rows="3" 
+                          placeholder="Type your thought..."></textarea>
+                
+                <div class="flex justify-between items-center">
+                    <button @click="showCommentInput = false" class="text-xs font-bold text-gray-500 px-4 py-2">CANCEL</button>
+                    <button @click="sendComment()" 
+                            class="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-6 py-2 rounded-full transform active:scale-95 transition shadow-[0_0_15px_rgba(234,179,8,0.5)]">
+                        SEND 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="activeStory" 
+             style="display: none;"
+             class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="translate-y-full opacity-0"
+             x-transition:enter-end="translate-y-0 opacity-100">
+             
+             <div class="flex items-center justify-between p-4 border-b border-gray-800 bg-black/80">
+                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Gist Reader</span>
+                 <button @click="activeStory = null" class="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold border border-gray-600">✕ Close</button>
+             </div>
+
+             <div class="flex-1 overflow-y-scroll p-6">
+                <template x-if="activeStory">
+                    <div class="max-w-xl mx-auto pt-4">
+                        <div class="w-full h-48 rounded-xl bg-cover bg-center mb-6 border border-gray-700 shadow-2xl" :style="`background-image: url('${activeStory.thumbnail || 'https://via.placeholder.com/400'}');`"></div>
+                        <h1 class="text-3xl font-bold mb-4 brand-font" x-text="activeStory.title"></h1>
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-800 mb-6 flex items-center justify-between">
+                            <div class="text-sm font-bold text-gray-300">Listen to summary</div>
+                            <button class="w-10 h-10 bg-yellow-500 rounded-full text-black flex items-center justify-center shadow-lg hover:scale-105 transition">▶</button>
+                        </div>
+                        <div class="prose prose-invert prose-lg text-gray-300">
+                             <p class="text-xl text-white font-medium" x-text="activeStory.summary"></p>
+                             <p class="mt-4">Full article content goes here...</p>
+                        </div>
+                    </div>
+                </template>
+             </div>
+        </div>
+
+    </div>
+
+    <script>
+        function gistApp() {
+            return {
+                showCommentInput: false,
+                activeStory: null,
+                targetStoryId: null,
+                newCommentText: '',
+                
+                stories: [
+                    { id: 1, category: "Tech", title: "Silicon Mountain Raises $2M", summary: "Buea tech ecosystem explodes with new foreign investment.", likes: "1.2k", liked: false, justLiked: false, thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1000&auto=format&fit=crop" },
+                    { id: 2, category: "Vibe", title: "Libianca Hits #1 Global", summary: "Cameroonian star breaks billboard records again.", likes: "8.5k", liked: false, justLiked: false, thumbnail: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=1000&auto=format&fit=crop" },
+                    { id: 3, category: "News", title: "New Digital ID Cards", summary: "Government launches streamlined process for IDs.", likes: "400", liked: false, justLiked: false, thumbnail: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?q=80&w=1000&auto=format&fit=crop" }
+                ],
+
+                // Fake comments for the demo
+                activeComments: [
+                    { id: 1, storyId: 1, user: 'Tunde', text: 'Big moves! 🚀' },
+                    { id: 2, storyId: 1, user: 'Chioma', text: 'Finally.' },
+                    { id: 3, storyId: 2, user: 'Favour', text: 'Queen things 👑' }
+                ],
+
+                toggleLike(id) {
+                    const story = this.stories.find(s => s.id === id);
+                    if (!story.liked) {
+                        story.liked = true;
+                        story.justLiked = true; // Triggers animation
+                        // Reset animation trigger
+                        setTimeout(() => { story.justLiked = false; }, 600);
+                    } else {
+                        story.liked = false;
+                    }
+                },
+
+                openCommentModal(id) {
+                    this.targetStoryId = id;
+                    this.showCommentInput = true;
+                },
+
+                getCommentCount(id) {
+                    return this.activeComments.filter(c => c.storyId === id).length;
+                },
+
+                sendComment() {
+                    if (!this.newCommentText.trim()) return;
+                    
+                    this.activeComments.push({
+                        id: Date.now(),
+                        storyId: this.targetStoryId,
+                        user: 'Me',
+                        text: this.newCommentText
+                    });
+                    
+                    this.newCommentText = '';
+                    this.showCommentInput = false;
+                },
+
+                openReader(story) {
+                    this.activeStory = story;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

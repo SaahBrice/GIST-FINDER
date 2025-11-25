@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GistMe - Afro-Futurist News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Carter+One&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- UTILITIES --- */
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Carter One', cursive; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- TEXTURE & AESTHETICS --- */
+        /* Noise overlay for a tactile, non-digital feel */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; opacity: 0.08;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- AFRO-PATTERNS (CSS generated) --- */
+        /* Complex geometric patterns for missing images */
+        .pattern-ankara-red {
+            background-color: #991b1b;
+            background-image: repeating-linear-gradient(45deg, #7f1d1d 25%, transparent 25%, transparent 75%, #7f1d1d 75%, #7f1d1d), repeating-linear-gradient(45deg, #7f1d1d 25%, #991b1b 25%, #991b1b 75%, #7f1d1d 75%, #7f1d1d);
+            background-position: 0 0, 20px 20px; background-size: 40px 40px;
+        }
+        .pattern-mudcloth-dark {
+            background-color: #1c1917;
+            background-image: radial-gradient(circle at 100% 150%, #1c1917 24%, #d6d3d1 25%, #d6d3d1 28%, #1c1917 29%, #1c1917 36%, #d6d3d1 36%, #d6d3d1 40%, transparent 40%, transparent), radial-gradient(circle at 0 150%, #1c1917 24%, #d6d3d1 25%, #d6d3d1 28%, #1c1917 29%, #1c1917 36%, #d6d3d1 36%, #d6d3d1 40%, transparent 40%, transparent), radial-gradient(circle at 50%  100%, #d6d3d1 10%, #1c1917 11%, #1c1917 23%, #d6d3d1 24%, #d6d3d1 30%, #1c1917 31%, #1c1917 43%, #d6d3d1 44%, #d6d3d1 50%, #1c1917 51%, #1c1917 63%, #d6d3d1 64%, #d6d3d1 71%, transparent 71%, transparent), radial-gradient(circle at 100% 50%, #d6d3d1 5%, #1c1917 6%, #1c1917 15%, #d6d3d1 16%, #d6d3d1 20%, #1c1917 21%, #1c1917 30%, #d6d3d1 31%, #d6d3d1 35%, #1c1917 36%, #1c1917 45%, #d6d3d1 46%, #d6d3d1 49%, transparent 50%, transparent), radial-gradient(circle at 0 50%, #d6d3d1 5%, #1c1917 6%, #1c1917 15%, #d6d3d1 16%, #d6d3d1 20%, #1c1917 21%, #1c1917 30%, #d6d3d1 31%, #d6d3d1 35%, #1c1917 36%, #1c1917 45%, #d6d3d1 46%, #d6d3d1 49%, transparent 50%, transparent);
+            background-size: 100px 50px;
+        }
+        .pattern-kente-gold {
+            background: conic-gradient(from 90deg at 2px 2px, #0000 90deg, #d97706 0) 0 0/50px 50px, conic-gradient(from 90deg at 1px 1px, #0000 90deg, #f59e0b 0) 0 0/25px 25px;
+            background-color: #78350f;
+        }
+         .pattern-indigo-geo {
+            background-color: #312e81;
+            opacity: 1;
+            background-image:  linear-gradient(30deg, #4f46e5 12%, transparent 12.5%, transparent 87%, #4f46e5 87.5%, #4f46e5), linear-gradient(150deg, #4f46e5 12%, transparent 12.5%, transparent 87%, #4f46e5 87.5%, #4f46e5), linear-gradient(30deg, #4f46e5 12%, transparent 12.5%, transparent 87%, #4f46e5 87.5%, #4f46e5), linear-gradient(150deg, #4f46e5 12%, transparent 12.5%, transparent 87%, #4f46e5 87.5%, #4f46e5), linear-gradient(60deg, #4338ca 25%, transparent 25.5%, transparent 75%, #4338ca 75.5%, #4338ca), linear-gradient(60deg, #4338ca 25%, transparent 25.5%, transparent 75%, #4338ca 75.5%, #4338ca);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+        }
+
+        /* --- ANIMATIONS --- */
+        /* The "Gist Bubble" Pulse - Making it alive */
+        @keyframes gist-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 20px rgba(234, 179, 8, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); transform: scale(1); }
+        }
+        .gist-bubble-pulse { animation: gist-pulse 2s infinite; }
+
+        .slide-up-fade { animation: slideUp 0.6s ease-out forwards; opacity: 0; transform: translateY(25px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes like-pump {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5) rotate(-10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 0; }
+        }
+        .like-animation { animation: like-pump 0.8s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-black text-white overflow-hidden fixed inset-0">
+
+    <div class="noise-overlay"></div>
+
+    <div x-data="gistMeApp()" class="h-full w-full relative">
+
+        <div x-show="showMoodSelector" 
+             x-transition.opacity.duration.500ms
+             class="absolute inset-0 z-50 bg-gray-900 flex flex-col items-center justify-center p-6 text-center pattern-mudcloth-dark">
+             <div class="absolute inset-0 bg-black/70 z-0"></div> <div class="relative z-10 space-y-8">
+                <h1 class="text-6xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-purple-600" style="text-shadow: 2px 2px 0px #000;">
+                    GistMe
+                </h1>
+                <p class="text-xl text-gray-200 font-bold">What's your vibe today?</p>
+                <div class="grid grid-cols-2 gap-6 w-full max-w-xs">
+                    <button @click="selectMood('Curious')" class="p-6 bg-indigo-900/80 border-2 border-indigo-500 rounded-xl hover:scale-105 transition flex flex-col items-center shadow-lg shadow-indigo-900/50">🤔 <span class="brand-font text-lg mt-2 text-white">Curious</span></button>
+                    <button @click="selectMood('Serious')" class="p-6 bg-red-900/80 border-2 border-red-500 rounded-xl hover:scale-105 transition flex flex-col items-center shadow-lg shadow-red-900/50">🧐 <span class="brand-font text-lg mt-2 text-white">Serious</span></button>
+                    <button @click="selectMood('Chill')" class="p-6 bg-teal-900/80 border-2 border-teal-500 rounded-xl hover:scale-105 transition flex flex-col items-center shadow-lg shadow-teal-900/50">😌 <span class="brand-font text-lg mt-2 text-white">Chill</span></button>
+                    <button @click="selectMood('Hyped')" class="p-6 bg-yellow-700/80 border-2 border-yellow-500 rounded-xl hover:scale-105 transition flex flex-col items-center shadow-lg shadow-yellow-600/50 gist-bubble-pulse">🤩 <span class="brand-font text-lg mt-2 text-white">Hyped</span></button>
+                </div>
+            </div>
+        </div>
+
+
+        <div x-show="!showMoodSelector" class="h-full w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar">
+            <template x-for="(story, index) in filteredStories" :key="story.id">
+                <div class="h-full w-full snap-start relative flex flex-col justify-end shrink-0 border-b-4 border-black"
+                     @dblclick="triggerLike(story.id)">
+
+                    <div class="absolute inset-0 z-0 transition-transform duration-700 ease-out scale-105" 
+                         :class="story.thumbnail ? '' : getMoodPattern(story.mood)"
+                         :style="story.thumbnail ? `background-image: url('${story.thumbnail}'); background-size: cover; background-position: center;` : ''">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent/40"></div>
+                    </div>
+
+                    <div class="relative z-10 p-6 pb-24 w-full flex flex-col items-start space-y-3">
+                        <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full uppercase tracking-widest font-bold text-xs border-2"
+                             :class="getMoodColor(story.mood)">
+                            <span x-text="story.moodEmoji"></span> <span x-text="story.mood"></span>
+                        </div>
+
+                        <h2 class="text-3xl sm:text-4xl leading-none text-white slide-up-fade" 
+                            style="text-shadow: 3px 3px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;"
+                            x-text="story.title">
+                        </h2>
+
+                         <p class="text-gray-200 font-medium line-clamp-3 slide-up-fade text-lg" style="animation-delay: 0.1s; text-shadow: 1px 1px 2px black;" x-text="story.summary"></p>
+
+                        <div class="flex items-center space-x-3 text-sm text-gray-300 font-bold slide-up-fade pt-2" style="animation-delay: 0.2s">
+                             <span x-text="story.source"></span> • <span x-text="story.time"></span>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-6 left-0 right-0 z-20 flex justify-center slide-up-fade" style="animation-delay: 0.3s">
+                        <button @click="openReader(story)"
+                                class="gist-bubble-pulse bg-yellow-500 text-black p-5 rounded-full shadow-2xl shadow-yellow-500/50 flex items-center justify-center border-4 border-black relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10">
+                              <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.678 3.348-3.97zM8.25 10.5a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zM8.25 13.5a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+                            </svg>
+                            <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-black px-2 py-1 rounded-full border-2 border-black">GET THE GIST</span>
+                        </button>
+                    </div>
+
+                    <div class="absolute right-4 bottom-32 z-20 flex flex-col space-y-6 items-center">
+                        <div class="flex flex-col items-center group">
+                            <button class="bg-black/40 p-3 rounded-full backdrop-blur-md border-2 border-white/20 group-active:scale-125 transition">❤️</button>
+                            <span class="text-sm mt-1 font-bold">1.2k</span>
+                        </div>
+                         <button class="bg-black/40 p-3 rounded-full backdrop-blur-md border-2 border-white/20">📤</button>
+                    </div>
+
+                    <div x-show="likedStoryId === story.id" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+                        <div class="text-9xl like-animation" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));">❤️</div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div x-show="activeStory" x-transition.opacity class="absolute inset-0 z-50 bg-black text-white overflow-y-scroll p-6" style="display: none;">
+             <div class="noise-overlay"></div>
+            <button @click="activeStory = null" class="fixed top-6 right-6 bg-gray-900 border-2 border-gray-600 rounded-full px-4 py-2 z-50 font-bold">✕ Close</button>
+
+            <template x-if="activeStory">
+                <div class="pt-16 pb-20 relative z-10">
+                     <div class="mb-6">
+                         <div class="inline-flex items-center space-x-2 px-3 py-1 mb-4 rounded-full uppercase tracking-widest font-bold text-xs border-2" :class="getMoodColor(activeStory.mood)">
+                            <span x-text="activeStory.moodEmoji"></span> <span x-text="activeStory.mood"></span>
+                        </div>
+                        <h1 class="text-4xl font-black mb-4" x-text="activeStory.title"></h1>
+                        <div class="flex space-x-4 text-sm text-gray-400 font-bold uppercase">
+                            <span x-text="activeStory.source"></span> • <span x-text="activeStory.time"></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-500 p-4 rounded-xl mb-8 flex items-center justify-between shadow-lg shadow-yellow-500/20 border-4 border-black">
+                        <div>
+                             <p class="text-xs text-black font-black uppercase tracking-wider">GistMe Audio Player</p>
+                             <h3 class="font-bold text-black text-lg brand-font">Listening in English...</h3>
+                        </div>
+                        <button class="bg-black text-yellow-500 p-4 rounded-full gist-bubble-pulse">▶️</button>
+                    </div>
+
+                    <div class="prose prose-invert prose-lg">
+                        <p class="lead text-2xl text-yellow-400 mb-6 font-bold brand-font" x-text="activeStory.summary"></p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. This text would be the full article content generated by the AI.</p>
+                        <p class="font-bold text-xl my-4 pl-4 border-l-4 border-yellow-500 italic text-gray-300">"This is a key quote from the article that stands out to the reader."</p>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        function gistMeApp() {
+            return {
+                showMoodSelector: true,
+                currentMood: '',
+                activeStory: null,
+                likedStoryId: null,
+                // 10 DUMMY ITEMS: 3 with thumbnails, 7 without
+                stories: [
+                    // --- WITH THUMBNAILS (3) ---
+                    { id: 1, mood: "Hyped", moodEmoji: "🤩", title: "Lagos Startups Raise Record $500M in Q3", summary: "Nigerian tech ecosystem explodes as international investors double down on local fintech solutions.", time: "2h ago", source: "TechCabal", thumbnail: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1000&auto=format&fit=crop" },
+                    { id: 4, mood: "Chill", moodEmoji: "😌", title: "The Rise of Afro-Beats in Tokyo Nightlife", summary: "How Nigerian and Ghanaian rhythms are conquering dancefloors across Japan.", time: "1d ago", source: "OkayAfrica", thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop" },
+                    { id: 7, mood: "Serious", moodEmoji: "🧐", title: "New Climate Policy for Congo Basin Announced", summary: "Regional leaders sign historic pact to protect the world's second-largest rainforest.", time: "5h ago", source: "BBC Africa", thumbnail: "https://images.unsplash.com/photo-1440342359726-e2bb38b4a125?q=80&w=1000&auto=format&fit=crop" },
+                    // --- WITHOUT THUMBNAILS (7) - Rely on Patterns ---
+                    { id: 2, mood: "Serious", moodEmoji: "🧐", title: "Cameroon Implements New Digital Tax Law", summary: "Government aims to widen the tax net to include e-commerce giants operating locally.", time: "4h ago", source: "CRTV", thumbnail: null },
+                    { id: 3, mood: "Hyped", moodEmoji: "🤩", title: "Indomitable Lions Qualify for AFCON Finals!", summary: "A stunning last-minute goal secures Cameroon's spot in the upcoming tournament.", time: "30m ago", source: "Fecafoot", thumbnail: null },
+                    { id: 5, mood: "Curious", moodEmoji: "🤔", title: "Are Mobile Money Fees Becoming Too High?", summary: "A deep dive into user complaints and the central bank's response to rising transaction costs.", time: "8h ago", source: "Business in Cameroon", thumbnail: null },
+                    { id: 6, mood: "Chill", moodEmoji: "😌", title: "Weekend Guide: Best Spot for Grilled Fish in Douala", summary: "We reviewed the top 5 roadside spots in Bonapriso for the ultimate weekend chill.", time: "2d ago", source: "GistMe Local", thumbnail: null },
+                    { id: 8, mood: "Serious", moodEmoji: "🧐", title: "Infrastructure Update: The Yaoundé-Douala Highway", summary: "Construction resumes on key sections after a three-month delay due to funding issues.", time: "12h ago", source: "Cameroon Tribune", thumbnail: null },
+                    { id: 9, mood: "Curious", moodEmoji: "🤔", title: "The Untold Story of Buea's 'Silicon Mountain'", summary: "How a small town became the unlikely heart of technological innovation in Central Africa.", time: "1d ago", source: "Quartz Africa", thumbnail: null },
+                    { id: 10, mood: "Hyped", moodEmoji: "🤩", title: "Wizkid Announces Surprise Lagos Stadium Concert", summary: "Tickets sold out in minutes for what promises to be the biggest show of the year.", time: "3h ago", source: "Pulse NG", thumbnail: null }
+                ],
+
+                get filteredStories() {
+                    if (!this.currentMood) return this.stories;
+                    return this.stories.filter(s => s.mood === this.currentMood).concat(this.stories.filter(s => s.mood !== this.currentMood));
+                },
+
+                selectMood(mood) {
+                    this.currentMood = mood;
+                    setTimeout(() => { this.showMoodSelector = false; }, 400);
+                },
+                openReader(story) { this.activeStory = story; },
+                triggerLike(id) {
+                    this.likedStoryId = id;
+                    setTimeout(() => { this.likedStoryId = null; }, 800);
+                },
+                // CSS classes for the geometric patterns
+                getMoodPattern(mood) {
+                    switch(mood) {
+                        case 'Hyped': return 'pattern-kente-gold';
+                        case 'Serious': return 'pattern-mudcloth-dark';
+                        case 'Chill': return 'pattern-indigo-geo';
+                        case 'Curious': return 'pattern-ankara-red';
+                        default: return 'pattern-mudcloth-dark';
+                    }
+                },
+                // Badge colors
+                getMoodColor(mood) {
+                    switch(mood) {
+                        case 'Hyped': return 'bg-yellow-500 text-black border-yellow-600';
+                        case 'Serious': return 'bg-red-900 text-white border-red-700';
+                        case 'Chill': return 'bg-teal-800 text-white border-teal-600';
+                        default: return 'bg-indigo-900 text-white border-indigo-700';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
