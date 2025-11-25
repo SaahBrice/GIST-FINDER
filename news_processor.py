@@ -23,21 +23,22 @@ def process_article(category):
             log_error(f"Failed to get article data for {category}", module="news_processor")
             return False
         
-        headline = article_data.get('headline', 'No headline')
+        # Extract bilingual headlines (fallback to legacy 'headline' if present)
+        headline_en = article_data.get('headline_en') or article_data.get('headline')
+        headline_fr = article_data.get('headline_fr') or article_data.get('headline')
         source = article_data.get('source_url', '')
 
         # Use x hours (x/24 days) for deduplication time window
-        if is_duplicate(headline, category, allowed_similarity, max_hours):
-            log_info(f"SKIPPED as duplicate: {headline[:60]}", module='news_processor')
+        if is_duplicate(headline_en, headline_fr, category, allowed_similarity, max_hours):
+            log_info(f"SKIPPED as duplicate: {headline_en or headline_fr or 'No headline'}", module='news_processor')
             return False  # Don't process further
 
         # Save to deduplication DB
-        save_article(headline, category, source)
+        save_article(headline_en, headline_fr, category, source)
         
         french_summary = article_data.get('french_summary')
         english_summary = article_data.get('english_summary')
         mood = article_data.get('mood', 'neutral')
-        headline = article_data.get('headline', 'No headline')
         
         # Validate presence of summaries
         if not french_summary or not english_summary:
@@ -66,14 +67,15 @@ def process_article(category):
             log_warning(f"No thumbnails found for {category} article", module="news_processor")
         
         # Success summary logs
-        log_success(f"✨ {category.upper()} completed | {headline[:40]}...", module="news_processor")
+        log_success(f"✨ {category.upper()} completed | {(headline_en or headline_fr or '')[:40]}...", module="news_processor")
         console.print(f"   📝 FR: {french_summary[:80]}...")
         console.print(f"   📝 EN: {english_summary[:80]}...")
         console.print(f"   🎭 Mood: {mood} | 🔊 Audio: ✓ | 📷 Thumb: {'✓' if thumbnails else '✗'}\n")
         
-        # Prepare article data for upload    
+        # Prepare article data for upload (include bilingual headlines)
         article_data_to_upload = {
-            "headline": headline,
+            "headline_en": headline_en,
+            "headline_fr": headline_fr,
             "category": category,
             "french_summary": french_summary,
             "english_summary": english_summary,
@@ -89,9 +91,9 @@ def process_article(category):
         # Upload with retry support
         upload_success = upload_article(article_data_to_upload)
         if upload_success:
-            log_info(f"Article uploaded successfully: {headline[:50]}...", module="news_processor")
+            log_info(f"Article uploaded successfully: {(headline_en or headline_fr or '')[:50]}...", module="news_processor")
         else:
-            log_error(f"Article upload failed: {headline[:50]}... Saving for retry.", module="news_processor")
+            log_error(f"Article upload failed: {(headline_en or headline_fr or '')[:50]}... Saving for retry.", module="news_processor")
             save_failed_article(article_data_to_upload)
 
         return True

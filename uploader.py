@@ -14,14 +14,18 @@ def upload_article(article_data, max_retries=3, retry_delay=5):
     headline, category, summaries, mood, sources, thumbnails, audio paths, timestamps.
     """
     url = f"{config.API_BASE_URL}/articles/"
-    headers = {"Content-Type": "application/json"}
+    headers = {
+        "Content-Type": "application/json",
+        "X-API-KEY": config.API_SECRET_CODE
+    }
 
     # Inject the secret source code for backend verification
-    payload = {**article_data, "source_code": config.API_SECRET_CODE}
+    payload = article_data
 
     for attempt in range(1, max_retries + 1):
         try:
-            log_info(f"Uploading article: '{article_data.get('headline', 'No headline')[:50]}...' (Attempt {attempt})")
+            title_preview = (article_data.get('headline_en') or article_data.get('headline_fr') or 'No headline')
+            log_info(f"Uploading article: '{title_preview[:50]}...' (Attempt {attempt})")
             response = requests.post(url, json=payload, headers=headers, timeout=20)
             response.raise_for_status()
             log_info(f"Upload successful with status {response.status_code}")
@@ -32,7 +36,8 @@ def upload_article(article_data, max_retries=3, retry_delay=5):
                 log_info(f"Retrying upload after {retry_delay} seconds...")
                 time.sleep(retry_delay)
             else:
-                log_error(f"All {max_retries} upload attempts failed for: {article_data.get('headline', '')[:50]}")
+                title_preview = (article_data.get('headline_en') or article_data.get('headline_fr') or '')
+                log_error(f"All {max_retries} upload attempts failed for: {title_preview[:50]}")
                 return False
 
 def save_failed_article(article_data):
@@ -42,7 +47,8 @@ def save_failed_article(article_data):
     try:
         with open(FAILED_UPLOADS_FILE, 'a', encoding='utf-8') as f:
             f.write(json.dumps(article_data, ensure_ascii=False) + '\n')
-        log_info(f"Saved failed article for retry: {article_data.get('headline', '')[:50]}")
+        title_preview = (article_data.get('headline_en') or article_data.get('headline_fr') or '')
+        log_info(f"Saved failed article for retry: {title_preview[:50]}")
     except Exception as e:
         log_error(f"Failed to save article for retry: {e}")
 

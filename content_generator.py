@@ -7,9 +7,15 @@ from deduplication import get_db, max_hours
 def get_recent_headlines(category, hours=max_hours):
     conn = get_db()
     cutoff_time = datetime.utcnow() - timedelta(hours=hours)
-    cur = conn.execute("""SELECT headline FROM seen_articles WHERE category=? AND created_at > ?""",
+    # Return both English and French recent headlines so the generator can avoid similar news
+    cur = conn.execute("""SELECT headline_en, headline_fr FROM seen_articles WHERE category=? AND created_at > ?""",
                        (category, cutoff_time.isoformat()))
-    headlines = [row[0] for row in cur]
+    headlines = []
+    for en, fr in cur:
+        if en:
+            headlines.append(en)
+        if fr:
+            headlines.append(fr)
     conn.close()
     return headlines
 
@@ -78,7 +84,8 @@ def build_prompt(category, word_count, exclude_headlines=None):
 
         Return your response in this EXACT JSON format:
         {{
-          "headline": "Brief headline",
+          "headline_en": "Brief headline in ENGLISH",
+          "headline_fr": "Brief headline in FRENCH",
           "source_urls": [
             "https://camer.be/article1",
             "https://examresults.cm/article2"
@@ -108,7 +115,8 @@ def build_prompt(category, word_count, exclude_headlines=None):
 
         Return your response in this EXACT JSON format:
         {{
-          "headline": "Brief headline",
+          "headline_en": "Brief headline in ENGLISH",
+          "headline_fr": "Brief headline in FRENCH",
           "source_urls": [
             "https://jobportal.cm/article1",
             "https://division.cameroonjobs.org/article2"
@@ -143,11 +151,19 @@ def build_prompt(category, word_count, exclude_headlines=None):
 
         Return your response in this EXACT JSON format:
         {{
-            "headline": "Brief headline",
-            "source_url": "URL of original article",
-            "french_summary": "Full French summary here",
-            "english_summary": "Full English summary here",
-            "mood": "mood word"
+          "headline_en": "Brief headline in ENGLISH",
+          "headline_fr": "Brief headline in FRENCH",
+          "source_urls": [
+            "https://jobportal.cm/article1",
+            "https://division.cameroonjobs.org/article2"
+          ],
+          "source_names": [
+            "jobportal.cm",
+            "cameroonjobs.org"
+          ],
+          "french_summary": "French summary...",
+          "english_summary": "English summary...",
+          "mood": "mood word"
         }}
 
         Return ONLY valid JSON, nothing else.
